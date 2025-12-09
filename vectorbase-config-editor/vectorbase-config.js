@@ -3122,7 +3122,6 @@ function t(path) {
         if (value && value[key] !== undefined) {
             value = value[key];
         } else {
-            console.warn(`Translation not found: ${path}`);
             return path;
         }
     }
