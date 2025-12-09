@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки Vector Base Manager</title>
+    <script src="cache-control.php?file=vectorbase-config.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Настройки Vector Base Manager</h1>
+            <p style="margin-top: 10px; color: #6b7280;">
+                Визуальный редактор для настройки системы управления базами знаний
+            </p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('general')">
+                🌍 Основные
+            </button>
+            <button class="tab" onclick="switchTab('databases')">
+                📚 Базы данных
+            </button>
+            <button class="tab" onclick="switchTab('files')">
+                📁 Типы файлов
+            </button>
+            <button class="tab" onclick="switchTab('technical')">
+                🔧 Технические
+            </button>
+        </div>
+
+        <!-- Основные настройки -->
+        <div id="general-tab" class="tab-content active">
+            <div class="section">
+                <h2>🌍 Язык интерфейса</h2>
+                <div class="language-select" id="languageSelect">
+                    <!-- Языки будут добавлены динамически -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Базы данных -->
+        <div id="databases-tab" class="tab-content">
+            <div class="section">
+                <h2>📚 Управление базами данных</h2>
+                <div id="databasesList">
+                    <!-- Базы данных будут добавлены динамически -->
+                </div>
+                <button class="add-database-btn" onclick="addNewDatabase()">
+                    ➕ Добавить новую базу данных
+                </button>
+            </div>
+        </div>
+
+        <!-- Типы файлов -->
+        <div id="files-tab" class="tab-content">
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h2>📄 MIME типы файлов</h2>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div id="mimeTypesList">
+                        <!-- MIME типы будут добавлены динамически -->
+                    </div>
+                    <button class="add-database-btn" onclick="addMimeType()">
+                        ➕ Добавить MIME тип
+                    </button>
+                </div>
+            </div>
+
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <h2>📎 Расширения файлов</h2>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div id="extensionsList">
+                        <!-- Расширения будут добавлены динамически -->
+                    </div>
+                    <button class="add-database-btn" onclick="addExtension()">
+                        ➕ Добавить расширение
+                    </button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>💾 Лимиты размера файлов</h2>
+                <div class="form-group">
+                    <label>Максимальный размер одного файла (в байтах):</label>
+                    <input type="number" class="form-control" id="maxFileSize" step="1024">
+                    <small style="color: #6b7280; margin-top: 5px; display: block;">
+                        Например: 10485760 = 10MB
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Максимальный общий размер файлов (в байтах):</label>
+                    <input type="number" class="form-control" id="maxTotalFileSize" step="1024">
+                    <small style="color: #6b7280; margin-top: 5px; display: block;">
+                        Например: 52428800 = 50MB
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Технические настройки -->
+        <div id="technical-tab" class="tab-content">
+            <div class="section">
+                <h2>🔗 API настройки</h2>
+                <div class="form-group">
+                    <label>Базовый URL:</label>
+                    <input type="url" class="form-control" id="baseUrl">
+                </div>
+                <div class="form-group">
+                    <label>API ключ:</label>
+                    <input type="text" class="form-control" id="apiKey">
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🌐 Endpoints</h2>
+                <div class="url-inputs">
+                    <div class="form-group">
+                        <label>Чтение базы данных:</label>
+                        <input type="text" class="form-control" id="readVectorBase">
+                    </div>
+                    <div class="form-group">
+                        <label>Запись в базу данных:</label>
+                        <input type="text" class="form-control" id="writeVectorBase">
+                    </div>
+                    <div class="form-group">
+                        <label>Получение статистики обучения:</label>
+                        <input type="text" class="form-control" id="getLearningStats">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>⚙️ Параметры системы</h2>
+                <div class="form-group">
+                    <label>Интервал автообновления (мс):</label>
+                    <input type="number" class="form-control" id="refreshInterval" min="1000" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>Записей на странице:</label>
+                    <input type="number" class="form-control" id="recordsPerPage" min="5" max="100" step="5">
+                </div>
+                <div class="form-group">
+                    <label>Истории на странице:</label>
+                    <input type="number" class="form-control" id="historyPerPage" min="5" max="100" step="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки сохранения -->
+        <div class="save-section">
+            <button class="btn btn-primary" onclick="saveConfiguration()">
+                💾 Сохранить изменения
+            </button>
+            <button class="btn btn-secondary" onclick="resetConfiguration()">
+                ↩️ Сбросить изменения
+            </button>
+            <button class="btn btn-secondary" onclick="exportConfiguration()">
+                📤 Экспортировать конфигурацию
+            </button>
+            <button class="btn btn-secondary" onclick="restoreFromBackup()">
+                📥 Восстановить из резерва
+            </button>
+            <button class="btn btn-danger" onclick="resetToDefaults()">
+                🔄 Сбросить на заводские
+            </button>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        ✅ Настройки успешно сохранены!
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

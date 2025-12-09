@@ -1,0 +1,2840 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор конфигурации WebChat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковая панель -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>💬 WebChat Config</h1>
+                <p data-i18n="app.subtitle">Визуальный редактор конфигурации</p>
+                <div style="margin-top: 10px; display: flex; gap: 5px; align-items: center;">
+                    <button class="lang-switch-btn" onclick="switchUILanguage('ru')" id="langBtnRu" style="padding: 4px 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 500;">RU</button>
+                    <button class="lang-switch-btn" onclick="switchUILanguage('en')" id="langBtnEn" style="padding: 4px 8px; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: rgba(255,255,255,0.7); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 500;">EN</button>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <!-- Глобальные настройки -->
+<div class="nav-section">
+    <div class="nav-section-title" data-i18n="nav.global_settings">ГЛОБАЛЬНЫЕ НАСТРОЙКИ</div>
+    <div class="nav-item active" data-page="global-settings">
+        <span class="nav-item-icon">🌐</span>
+        <span class="nav-item-label" data-i18n="nav.main_params">Основные параметры</span>
+    </div>
+</div>
+
+                <!-- Конфигурации -->
+<div class="nav-section">
+    <div class="nav-section-title" data-i18n="nav.configurations">Конфигурации</div>
+    <div class="nav-item" data-page="configurations-list" id="configMenuToggle" onclick="toggleConfigMenu()">
+        <span class="nav-item-icon">📋</span>
+        <span class="nav-item-label" data-i18n="nav.all_configs">Все конфигурации</span>
+        <span class="nav-item-icon config-menu-arrow" id="configMenuArrow" style="margin-left: auto; transition: transform 0.3s;">▼</span>
+    </div>
+    <!-- ✅ ДИНАМИЧЕСКИЙ СПИСОК - будет заполняться автоматически -->
+    <div class="config-submenu expanded" id="dynamicConfigMenu">
+        <!-- Конфигурации будут добавлены через JavaScript -->
+    </div>
+</div>
+<!-- Дополнительно -->
+<div class="nav-section">
+    <div class="nav-section-title" data-i18n="nav.additional">Дополнительно</div>
+    <div class="nav-item" data-page="base-settings">
+        <span class="nav-item-icon">⚙️</span>
+        <span class="nav-item-label" data-i18n="nav.base_settings">Базовые настройки</span>
+    </div>
+    <div class="nav-item" data-page="branding-settings">
+        <span class="nav-item-icon">🏷️</span>
+        <span class="nav-item-label" data-i18n="nav.branding">Брендирование</span>
+    </div>
+    <div class="nav-item" data-page="export-import">
+        <span class="nav-item-icon">📤</span>
+        <span class="nav-item-label" data-i18n="nav.export_import">Экспорт/Импорт</span>
+    </div>
+    <div class="nav-item" data-page="gdpr-settings">
+        <span class="nav-item-icon">🔒</span>
+        <span class="nav-item-label" data-i18n="nav.gdpr">GDPR / Приватность</span>
+    </div>
+</div>
+            </nav>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Кнопка мобильного меню -->
+<button class="mobile-menu-btn" onclick="toggleMobileMenu()" style="
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    font-size: 20px;
+">
+    ☰
+</button>
+            <!-- Страница: Глобальные настройки -->
+            <div id="global-settings" class="page-content active">
+                <div class="page-header">
+                    <h2 data-i18n="global.title">🌐 Глобальные настройки</h2>
+                    <p data-i18n="global.subtitle">Основные параметры системы веб-чата</p>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" onclick="saveConfiguration()">
+                            <span>💾</span> <span data-i18n="global.save_changes">Сохранить изменения</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <h3 class="settings-section-title">
+                            <span>🔄</span> <span data-i18n="config_switcher.title">Переключатель конфигураций</span>
+                        </h3>
+                    </div>
+
+                    <div class="toggle-wrapper">
+                        <div class="toggle-info">
+                            <div class="toggle-label" data-i18n="config_switcher.show">Показывать переключатель</div>
+                            <div class="toggle-description" data-i18n="config_switcher.show_desc">Позволяет пользователям выбирать между разными конфигурациями</div>
+                        </div>
+                        <div class="toggle-switch active" id="showConfigSwitcherToggle" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid mt-3">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="config_switcher.default_config">Конфигурация по умолчанию</label>
+                            <select class="form-control" id="defaultConfigSelector">
+                                <!-- Опции загружаются динамически через updateDefaultConfigSelector() -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <h3 class="settings-section-title">
+                            <span>🔑</span> <span data-i18n="api.title">API настройки</span>
+                        </h3>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="api.key_label">API ключ</label>
+                            <input type="text" class="form-control" id="globalApiKey" placeholder="Введите API ключ для защиты вебхуков" data-i18n-placeholder="api.key_placeholder">
+                            <div class="form-hint" data-i18n="api.key_hint">Используется для защиты всех вебхуков системы</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <h3 class="settings-section-title">
+                            <span>🎨</span> <span data-i18n="theme.title">Настройки темы</span>
+                        </h3>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="theme.global">Глобальная тема</label>
+                            <select class="form-control">
+                                <option value="auto" data-i18n="theme.auto">Автоматическая</option>
+                                <option value="light" data-i18n="theme.light">Светлая</option>
+                                <option value="dark" data-i18n="theme.dark">Тёмная</option>
+                            </select>
+                            <div class="form-hint" data-i18n="theme.hint">Применяется ко всем конфигурациям по умолчанию</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="theme.individual">Индивидуальные темы</label>
+                            <div class="toggle-wrapper">
+                                <div class="toggle-info">
+                                    <div class="toggle-label" data-i18n="theme.allow_override">Разрешить переопределение</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <h3 class="settings-section-title">
+                            <span>🌍</span> <span data-i18n="lang.title">Языковые настройки</span>
+                        </h3>
+                    </div>
+
+                    <div class="toggle-wrapper">
+                        <div class="toggle-info">
+                            <div class="toggle-label" data-i18n="lang.show_switcher">Показывать переключатель языков</div>
+                            <div class="toggle-description" data-i18n="lang.show_switcher_desc">Позволяет пользователям менять язык интерфейса</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid mt-3">
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="lang.auto_detect">Автоопределение языка</label>
+                            <div class="toggle-wrapper">
+                                <div class="toggle-info">
+                                    <div class="toggle-label" data-i18n="lang.enabled">Включено</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" data-i18n="lang.default">Язык по умолчанию</label>
+                            <select class="form-control">
+                                <option value="ru">🇷🇺 Русский</option>
+                                <option value="en">🇺🇸 English</option>
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="fr">🇫🇷 Français</option>
+                                <option value="de">🇩🇪 Deutsch</option>
+                                <option value="it">🇮🇹 Italiano</option>
+                                <option value="pt">🇵🇹 Português</option>
+                                <option value="zh">🇨🇳 中文</option>
+                                <option value="ja">🇯🇵 日本語</option>
+                                <option value="ko">🇰🇷 한국어</option>
+                                <option value="ua">🇺🇦 Українська</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================ -->
+<!-- СЕКЦИЯ: ПРИОРИТЕТ НАСТРОЕК -->
+<!-- ============================================ -->
+<div class="settings-section">
+    <div class="settings-section-header">
+        <h3 class="settings-section-title">
+            <span>🔧</span> <span data-i18n="priority.title">Приоритет настроек конфигураций</span>
+        </h3>
+    </div>
+
+    <div class="info-box">
+        <div class="info-box-icon">ℹ️</div>
+        <div class="info-box-content">
+            <strong data-i18n="priority.info_title">Индивидуальные настройки:</strong> <span data-i18n="priority.info">Если включено, конфигурации могут иметь свои собственные настройки внешнего вида, поведения и технических параметров. Если выключено - используются только базовые настройки.</span>
+        </div>
+    </div>
+
+    <div class="toggle-wrapper">
+        <div class="toggle-info">
+            <div class="toggle-label" data-i18n="priority.allow">Разрешить индивидуальные настройки</div>
+            <div class="toggle-description" data-i18n="priority.allow_desc">Конфигурации могут переопределять базовые настройки</div>
+        </div>
+        <div class="toggle-switch" id="globalUseIndividualToggle" onclick="toggleSwitch(this)">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+
+    <div class="toggle-wrapper">
+        <div class="toggle-info">
+            <div class="toggle-label" data-i18n="priority.partial">Частичное переопределение</div>
+            <div class="toggle-description" data-i18n="priority.partial_desc">Конфигурации могут менять только часть настроек</div>
+        </div>
+        <div class="toggle-switch active" id="globalPartialOverrideToggle" onclick="toggleSwitch(this)">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- СЕКЦИЯ: АНИМАЦИЯ ОТВЕТОВ ИИ -->
+<!-- ============================================ -->
+<div class="settings-section">
+    <div class="settings-section-header">
+        <h3 class="settings-section-title">
+            <span>🎬</span> <span data-i18n="animation.title">Анимация ответов ИИ агента</span>
+        </h3>
+    </div>
+
+    <div class="info-box">
+        <div class="info-box-icon">ℹ️</div>
+        <div class="info-box-content">
+            <strong data-i18n="animation.info_title">Анимированное появление:</strong> <span data-i18n="animation.info">Ответы от ИИ появляются постепенно, имитируя процесс "печатания". Если выключено - весь ответ появляется сразу.</span>
+        </div>
+    </div>
+
+    <div class="toggle-wrapper">
+        <div class="toggle-info">
+            <div class="toggle-label" data-i18n="animation.enable">Включить анимацию</div>
+            <div class="toggle-description" data-i18n="animation.enable_desc">Ответы появляются постепенно, создавая эффект печатания</div>
+        </div>
+        <div class="toggle-switch active" id="streamingAnimationEnabledToggle" onclick="toggleSwitch(this)">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+
+    <div class="form-grid mt-3">
+        <div class="form-group">
+            <label class="form-label" data-i18n="animation.speed">Скорость анимации (мс)</label>
+            <input type="number" class="form-control" id="streamingAnimationSpeed" value="70" min="20" max="100" step="10" onchange="setDirty()">
+            <div class="form-hint" data-i18n="animation.speed_hint">Интервал между частями текста. Рекомендуется: 40-60 мс</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="animation.chunk_type">Тип разбивки текста</label>
+            <select class="form-control" id="streamingAnimationChunkType" onchange="setDirty()">
+                <option value="word" data-i18n="animation.chunk_word">По словам</option>
+                <option value="sentence" data-i18n="animation.chunk_sentence">По предложениям</option>
+                <option value="line" data-i18n="animation.chunk_line">По строкам</option>
+            </select>
+            <div class="form-hint" data-i18n="animation.chunk_hint">Как разбивать текст при анимации</div>
+        </div>
+    </div>
+</div>
+            </div>
+
+
+
+            <!-- Страница: Редактор конфигурации -->
+            <div id="config-editor" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h2 id="configTitle">💰 Редактирование: Финансы</h2>
+                    <p id="configDescription" data-i18n="config.edit_subtitle">Настройка конфигурации</p>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn btn-secondary btn-sm" onclick="backToList()">
+                            <span>←</span> <span data-i18n="config.back">Назад к списку</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" onclick="saveConfig()">
+                            <span>💾</span> <span data-i18n="config.save">Сохранить</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вкладки конфигурации -->
+                <div class="tabs">
+                    <div class="tabs-header">
+                        <button class="tab active" onclick="switchConfigTab('basic')" data-i18n="tabs.basic">Основное</button>
+                        <button class="tab" onclick="switchConfigTab('texts')" data-i18n="tabs.texts">Тексты</button>
+                        <button class="tab" onclick="switchConfigTab('contacts')" data-i18n="tabs.contacts">Контакты</button>
+                        <button class="tab" onclick="switchConfigTab('appearance')" data-i18n="tabs.appearance">Внешний вид</button>
+                        <button class="tab" onclick="switchConfigTab('behavior')" data-i18n="tabs.behavior">Поведение</button>
+                        <button class="tab" onclick="switchConfigTab('technical')" data-i18n="tabs.technical">Технические</button>
+                        <button class="tab" onclick="switchConfigTab('preview')" data-i18n="tabs.preview">Предпросмотр</button>
+                    </div>
+
+             <!-- Вкладка: Основное -->
+<div class="tab-content active" id="tab-basic">
+    <!-- ============================================ -->
+    <!-- ИНДИВИДУАЛЬНЫЕ НАСТРОЙКИ КОНФИГУРАЦИИ -->
+    <!-- ============================================ -->
+    <div class="settings-section">
+        <div class="settings-section-header">
+            <h3 class="settings-section-title">
+                <span>⚙️</span> <span data-i18n="config_priority.title">Приоритет настроек конфигурации</span>
+            </h3>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-icon">ℹ️</div>
+            <div class="info-box-content" data-i18n="config_priority.info">
+                Если включено "Использовать индивидуальные настройки", то настройки appearance, behavior и technical этой конфигурации будут приоритетнее базовых настроек. Если выключено - будут использоваться только базовые настройки.
+            </div>
+        </div>
+
+        <div class="toggle-wrapper">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="config_priority.use_individual">Использовать индивидуальные настройки</div>
+                <div class="toggle-description" data-i18n="config_priority.use_individual_desc">Приоритет настроек этой конфигурации над базовыми</div>
+            </div>
+            <div class="toggle-switch active" id="useIndividualSettingsToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="form-group mt-3">
+            <label class="form-label" data-i18n="config_priority.order">Порядок в переключателе</label>
+            <input type="number" class="form-control" id="switcherOrderInput" value="1" min="1" max="999" onchange="setDirty()">
+            <div class="form-hint" data-i18n="config_priority.order_hint">Порядковый номер конфигурации в списке переключателя (1 = первая)</div>
+        </div>
+
+        <div class="form-group mt-3">
+            <label class="form-label" data-i18n="config_priority.switcher_label">Название конфигурации в переключателе (label)</label>
+            <input type="text" class="form-control" id="switcherLabelInput" placeholder="💬 Название" onchange="setDirty()">
+            <div class="form-hint" data-i18n="config_priority.switcher_label_hint">Название, которое отображается в переключателе конфигураций (можно с эмодзи)</div>
+        </div>
+
+        <div class="form-group mt-3">
+            <label class="form-label" data-i18n="config_priority.switcher_desc">Описание конфигурации (description)</label>
+            <input type="text" class="form-control" id="switcherDescriptionInput" placeholder="Описание конфигурации" onchange="setDirty()">
+            <div class="form-hint" data-i18n="config_priority.switcher_desc_hint">Краткое описание конфигурации для переключателя</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ПОДДЕРЖИВАЕМЫЕ ЯЗЫКИ -->
+    <!-- ============================================ -->
+    <div class="settings-section">
+        <div class="settings-section-header">
+            <h3 class="settings-section-title">
+                <span>🌍</span> <span data-i18n="config_lang.title">Языковые настройки конфигурации</span>
+            </h3>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="config_lang.default">Язык по умолчанию для этой конфигурации</label>
+            <select class="form-control" id="configDefaultLanguage" onchange="setDirty()">
+                <option value="ru">🇷🇺 Русский</option>
+                <option value="en">🇺🇸 English</option>
+                <option value="ua">🇺🇦 Українська</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="pt">🇵🇹 Português</option>
+                <option value="zh">🇨🇳 中文</option>
+                <option value="ja">🇯🇵 日本語</option>
+                <option value="ko">🇰🇷 한국어</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="config_lang.supported">Поддерживаемые языки</label>
+            <div class="form-hint mb-2" data-i18n="config_lang.supported_hint">Выберите языки, которые будут доступны в этой конфигурации</div>
+            <div class="language-selector" id="supportedLanguagesSelector">
+                <label class="language-option selected" data-lang="ru">
+                    <input type="checkbox" checked style="display: none;">
+                    <div class="language-flag">🇷🇺</div>
+                    <div class="language-name">Русский</div>
+                </label>
+                <label class="language-option selected" data-lang="en">
+                    <input type="checkbox" checked style="display: none;">
+                    <div class="language-flag">🇺🇸</div>
+                    <div class="language-name">English</div>
+                </label>
+                <label class="language-option selected" data-lang="ua">
+                    <input type="checkbox" checked style="display: none;">
+                    <div class="language-flag">🇺🇦</div>
+                    <div class="language-name">Українська</div>
+                </label>
+                <label class="language-option selected" data-lang="fr">
+                    <input type="checkbox" checked style="display: none;">
+                    <div class="language-flag">🇫🇷</div>
+                    <div class="language-name">Français</div>
+                </label>
+                <label class="language-option" data-lang="es">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇪🇸</div>
+                    <div class="language-name">Español</div>
+                </label>
+                <label class="language-option" data-lang="de">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇩🇪</div>
+                    <div class="language-name">Deutsch</div>
+                </label>
+                <label class="language-option" data-lang="it">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇮🇹</div>
+                    <div class="language-name">Italiano</div>
+                </label>
+                <label class="language-option" data-lang="pt">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇵🇹</div>
+                    <div class="language-name">Português</div>
+                </label>
+                <label class="language-option" data-lang="zh">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇨🇳</div>
+                    <div class="language-name">中文</div>
+                </label>
+                <label class="language-option" data-lang="ja">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇯🇵</div>
+                    <div class="language-name">日本語</div>
+                </label>
+                <label class="language-option" data-lang="ko">
+                    <input type="checkbox" style="display: none;">
+                    <div class="language-flag">🇰🇷</div>
+                    <div class="language-name">한국어</div>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Вкладка: Тексты -->
+
+<!-- Вкладка: Тексты -->
+<div class="tab-content" id="tab-texts">
+    <div class="settings-section">
+        <div class="settings-section-header">
+            <h3 class="settings-section-title">
+                <span>🌍</span> <span data-i18n="texts.lang_select">Язык текстов</span>
+            </h3>
+        </div>
+
+        <select class="form-control" id="textLanguageSelect" onchange="switchTextLanguage(this.value)">
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="ua">🇺🇦 Українська</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="pt">🇵🇹 Português</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="ko">🇰🇷 한국어</option>
+        </select>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>💬</span> <span data-i18n="texts.main_title">Основные тексты</span>
+        </h3>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="texts.header_title">Название в шапке</label>
+                <input type="text" class="form-control" id="headerTitleInput" value="FinBot" onchange="setDirty()">
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="texts.header_subtitle">Подзаголовок</label>
+                <input type="text" class="form-control" id="headerSubtitleInput" value="Финансовый консультант" onchange="setDirty()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="texts.welcome">Приветственное сообщение</label>
+            <div class="text-editor-container">
+                <!-- Вкладки редактора -->
+                <div class="editor-tabs">
+                    <button class="editor-tab active" onclick="switchEditorTab('visual')" data-i18n="editor.visual_tab">Визуальный</button>
+                    <button class="editor-tab" onclick="switchEditorTab('html')" data-i18n="editor.html_tab">HTML</button>
+                </div>
+                <div class="text-editor-toolbar">
+                    <button class="editor-btn" onclick="formatText('bold')" data-i18n-title="editor.bold" title="Жирный"><b>B</b></button>
+                    <button class="editor-btn" onclick="formatText('italic')" data-i18n-title="editor.italic" title="Курсив"><i>I</i></button>
+                    <button class="editor-btn" onclick="formatText('underline')" data-i18n-title="editor.underline" title="Подчеркнутый"><u>U</u></button>
+                    <button class="editor-btn" onclick="formatText('strikeThrough')" data-i18n-title="editor.strikethrough" title="Зачеркнутый"><s>S</s></button>
+                    <span class="toolbar-separator"></span>
+                    <select class="editor-select" onchange="changeFontSize(this.value)" data-i18n-title="editor.font_size" title="Размер шрифта">
+                        <option value="" data-i18n="editor.font_size_option">Размер</option>
+                        <option value="1" data-i18n="editor.font_small">Мелкий</option>
+                        <option value="3" selected data-i18n="editor.font_medium">Средний</option>
+                        <option value="5" data-i18n="editor.font_large">Крупный</option>
+                        <option value="7" data-i18n="editor.font_xlarge">Очень крупный</option>
+                    </select>
+                    <input type="color" class="editor-color-picker" onchange="changeTextColor(this.value)" data-i18n-title="editor.text_color" title="Цвет текста" value="#000000">
+                    <button class="editor-btn" onclick="removeTextColor()" data-i18n-title="editor.remove_color" title="Очистить цвет">🎨</button>
+                    <input type="color" class="editor-color-picker" onchange="changeBackgroundColor(this.value)" data-i18n-title="editor.bg_color" title="Цвет фона" value="#ffffff">
+                    <span class="toolbar-separator"></span>
+                    <button class="editor-btn" onclick="formatText('justifyLeft')" data-i18n-title="editor.align_left" title="По левому краю">⬅</button>
+                    <button class="editor-btn" onclick="formatText('justifyCenter')" data-i18n-title="editor.align_center" title="По центру">⬌</button>
+                    <button class="editor-btn" onclick="formatText('justifyRight')" data-i18n-title="editor.align_right" title="По правому краю">➡</button>
+                    <span class="toolbar-separator"></span>
+                    <button class="editor-btn" onclick="formatText('insertUnorderedList')" data-i18n-title="editor.list_bullet" title="Маркированный список">•</button>
+                    <button class="editor-btn" onclick="formatText('insertOrderedList')" data-i18n-title="editor.list_numbered" title="Нумерованный список">1.</button>
+                    <button class="editor-btn" onclick="insertLink()" data-i18n-title="editor.insert_link" title="Вставить ссылку">🔗</button>
+                    <button class="editor-btn" onclick="formatText('removeFormat')" data-i18n-title="editor.remove_format" title="Очистить форматирование">✖</button>
+                    <span class="toolbar-separator"></span>
+                    <button class="editor-btn" onmousedown="event.preventDefault()" onclick="showEmojiPicker()" data-i18n-title="editor.insert_emoji" title="Вставить эмодзи">😊</button>
+                </div>
+                <div class="text-editor-content" id="welcomeMessageEditor" contenteditable="true" onkeyup="setDirty()">
+                    <strong>Добро пожаловать в банк! 💰</strong><br><br>
+                    Я помогу с банковскими услугами и отвечу на финансовые вопросы.<br><br>
+                    <b>Специализируюсь на:</b><br>
+                    💳 Картах и счетах<br>
+                    🏠 Кредитах и ипотеке<br>
+                    📈 Инвестициях<br>
+                    💼 Бизнес-услугах<br><br>
+                    <i>Чем могу быть полезен?</i>
+                </div>
+                <!-- HTML Editor Toolbar -->
+                <div class="text-editor-html-toolbar" style="display: none;">
+                    <button class="editor-btn" onmousedown="event.preventDefault()" onclick="showEmojiPicker()" data-i18n-title="editor.insert_emoji" title="Вставить эмодзи">😊</button>
+                </div>
+                <textarea class="text-editor-html" id="welcomeMessageHTMLEditor" style="display: none;" onkeyup="setDirty()"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>⚡</span> <span data-i18n="texts.quick_buttons">Быстрые кнопки</span>
+        </h3>
+
+        <div class="quick-buttons-editor" id="quickButtonsList">
+            <!-- Быстрые кнопки будут загружены динамически -->
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="addQuickButton()">
+            ➕ <span data-i18n="texts.add_button">Добавить кнопку</span>
+        </button>
+    </div>
+</div>
+
+<!-- Вкладка: Контакты -->
+<div class="tab-content" id="tab-contacts">
+    <div class="settings-section">
+        <div class="settings-section-header">
+            <h3 class="settings-section-title">
+                <span>📞</span> <span data-i18n="contacts.title">Контактная информация</span>
+            </h3>
+            <div class="d-flex gap-2">
+                <button class="btn btn-secondary btn-sm" onclick="addContact()">
+                    ➕ <span data-i18n="contacts.add">Добавить контакт</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="contacts.show">Показывать контакты</div>
+                <div class="toggle-description" data-i18n="contacts.show_desc">Отображать кнопку контактов в шапке чата</div>
+            </div>
+            <div class="toggle-switch active" id="contactsEnabledToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="contacts.title_field">Заголовок окна контактов</label>
+            <input type="text" class="form-control" id="contactsTitle" value="Связаться с нами" onchange="setDirty()">
+        </div>
+
+        <div class="contacts-editor">
+            <!-- Контакты будут загружены динамически -->
+        </div>
+    </div>
+</div>
+
+<!-- Вкладка: Внешний вид -->
+<div class="tab-content" id="tab-appearance">
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>📐</span> <span data-i18n="appearance.sizes_title">Размеры и позиционирование</span>
+        </h3>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.position">Позиция чата</label>
+                <select class="form-control" id="appearancePositionSelect" onchange="setDirty()">
+                    <option value="bottom-right" data-i18n="appearance.pos_bottom_right">Справа внизу</option>
+                    <option value="bottom-left" data-i18n="appearance.pos_bottom_left">Слева внизу</option>
+                    <option value="top-right" data-i18n="appearance.pos_top_right">Справа вверху</option>
+                    <option value="top-left" data-i18n="appearance.pos_top_left">Слева вверху</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.width">Ширина (px)</label>
+                <input type="number" class="form-control" id="appearanceWidthInput" value="400" onchange="setDirty()">
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.height">Высота (px)</label>
+                <input type="number" class="form-control" id="appearanceHeightInput" value="560" onchange="setDirty()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="appearance.margins">Отступы от краёв экрана</label>
+            <div class="form-grid">
+                <input type="number" class="form-control" id="appearanceMarginTop" data-i18n="appearance.margin_top" placeholder="Сверху" value="20" onchange="setDirty()">
+                <input type="number" class="form-control" id="appearanceMarginRight" data-i18n="appearance.margin_right" placeholder="Справа" value="60" onchange="setDirty()">
+                <input type="number" class="form-control" id="appearanceMarginBottom" data-i18n="appearance.margin_bottom" placeholder="Снизу" value="10" onchange="setDirty()">
+                <input type="number" class="form-control" id="appearanceMarginLeft" data-i18n="appearance.margin_left" placeholder="Слева" value="20" onchange="setDirty()">
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🎨</span> <span data-i18n="appearance.colors_title">Цвета и стили</span>
+        </h3>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="appearance.header_gradient">Цвет шапки (градиент)</label>
+            <div class="color-picker-wrapper">
+                <div class="gradient-preview" id="appearanceHeaderGradientPreview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"></div>
+                <button class="btn btn-secondary btn-sm" onclick="showGradientEditor()" data-i18n="appearance.change_gradient">Изменить градиент</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="appearance.header_text_color">Цвет текста в шапке</label>
+            <div class="color-picker-wrapper">
+                <div class="color-preview" id="appearanceHeaderTextColorPreview" style="background: #ffffff" onclick="pickColor('appearanceHeaderTextColor')"></div>
+                <input type="color" id="appearanceHeaderTextColorInput" value="#ffffff" style="display: none;" onchange="updateColorFromPicker('appearanceHeaderTextColor'); setDirty();">
+                <span id="appearanceHeaderTextColorValue" style="margin-left: 10px; color: #6b7280;">#ffffff</span>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.button_color">Цвет кнопок</label>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="appearanceButtonColorPreview" style="background: #667eea" onclick="pickColor('appearanceButtonColor')"></div>
+                    <input type="color" id="appearanceButtonColorInput" value="#667eea" style="display: none;" onchange="updateColorFromPicker('appearanceButtonColor'); setDirty();">
+                    <span id="appearanceButtonColorValue" style="margin-left: 10px; color: #6b7280;">#667eea</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.button_hover_color">Цвет кнопок при наведении</label>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="appearanceButtonHoverColorPreview" style="background: #5a67d8" onclick="pickColor('appearanceButtonHoverColor')"></div>
+                    <input type="color" id="appearanceButtonHoverColorInput" value="#5a67d8" style="display: none;" onchange="updateColorFromPicker('appearanceButtonHoverColor'); setDirty();">
+                    <span id="appearanceButtonHoverColorValue" style="margin-left: 10px; color: #6b7280;">#5a67d8</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.user_message_color">Цвет сообщений пользователя</label>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="appearanceUserMessageColorPreview" style="background: #ff5400" onclick="pickColor('appearanceUserMessageColor')"></div>
+                    <input type="color" id="appearanceUserMessageColorInput" value="#ff5400" style="display: none;" onchange="updateColorFromPicker('appearanceUserMessageColor'); setDirty();">
+                    <span id="appearanceUserMessageColorValue" style="margin-left: 10px; color: #6b7280;">#ff5400</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.user_message_text_color">Цвет текста в сообщениях</label>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="appearanceUserMessageTextColorPreview" style="background: #ffffff" onclick="pickColor('appearanceUserMessageTextColor')"></div>
+                    <input type="color" id="appearanceUserMessageTextColorInput" value="#ffffff" style="display: none;" onchange="updateColorFromPicker('appearanceUserMessageTextColor'); setDirty();">
+                    <span id="appearanceUserMessageTextColorValue" style="margin-left: 10px; color: #6b7280;">#ffffff</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="color-palette">
+            <div class="color-option" style="background: #667eea" onclick="applyPaletteColor('#667eea')"></div>
+            <div class="color-option" style="background: #764ba2" onclick="applyPaletteColor('#764ba2')"></div>
+            <div class="color-option" style="background: #ff5400" onclick="applyPaletteColor('#ff5400')"></div>
+            <div class="color-option" style="background: #10b981" onclick="applyPaletteColor('#10b981')"></div>
+            <div class="color-option" style="background: #3b82f6" onclick="applyPaletteColor('#3b82f6')"></div>
+            <div class="color-option" style="background: #8b5cf6" onclick="applyPaletteColor('#8b5cf6')"></div>
+            <div class="color-option" style="background: #ec4899" onclick="applyPaletteColor('#ec4899')"></div>
+            <div class="color-option" style="background: #14b8a6" onclick="applyPaletteColor('#14b8a6')"></div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🔤</span> <span data-i18n="appearance.fonts_title">Шрифты</span>
+        </h3>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.font_family">Семейство шрифтов</label>
+                <select class="form-control" id="appearanceFontFamilySelect" onchange="setDirty()">
+                    <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif" data-i18n="appearance.font_system">Системный шрифт</option>
+                    <option value="'Roboto', sans-serif" selected>Roboto</option>
+                    <option value="'Inter', sans-serif">Inter</option>
+                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                    <option value="'Lato', sans-serif">Lato</option>
+                    <option value="'Poppins', sans-serif">Poppins</option>
+                    <option value="'Raleway', sans-serif">Raleway</option>
+                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                    <option value="'Noto Sans', sans-serif">Noto Sans</option>
+                    <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                    <option value="'Nunito', sans-serif">Nunito</option>
+                    <option value="'PT Sans', sans-serif">PT Sans</option>
+                    <option value="'Work Sans', sans-serif">Work Sans</option>
+                    <option value="'Fira Sans', sans-serif">Fira Sans</option>
+                    <option value="'Josefin Sans', sans-serif">Josefin Sans</option>
+                    <option value="'Oswald', sans-serif">Oswald</option>
+                    <option value="'Merriweather', serif">Merriweather</option>
+                    <option value="'Playfair Display', serif">Playfair Display</option>
+                    <option value="'Georgia', serif">Georgia</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.platform">Платформа</label>
+                <select class="form-control" onchange="switchFontPlatform(this.value)">
+                    <option value="desktop" data-i18n="appearance.platform_desktop">Десктоп</option>
+                    <option value="mobile" data-i18n="appearance.platform_mobile">Мобильные устройства</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid" id="fontSizesDesktop">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.message_size">Размер текста сообщений</label>
+                <select class="form-control" id="desktopFontMessageSize" onchange="setDirty()">
+                    <option value="10px">10px</option>
+                    <option value="11px">11px</option>
+                    <option value="12px">12px</option>
+                    <option value="13px">13px</option>
+                    <option value="14px" selected>14px</option>
+                    <option value="15px">15px</option>
+                    <option value="16px">16px</option>
+                    <option value="17px">17px</option>
+                    <option value="18px">18px</option>
+                    <option value="19px">19px</option>
+                    <option value="20px">20px</option>
+                    <option value="21px">21px</option>
+                    <option value="22px">22px</option>
+                    <option value="23px">23px</option>
+                    <option value="24px">24px</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.header_size">Размер заголовка</label>
+                <select class="form-control" id="desktopFontHeaderSize" onchange="setDirty()">
+                    <option value="12px">12px</option>
+                    <option value="13px">13px</option>
+                    <option value="14px">14px</option>
+                    <option value="15px">15px</option>
+                    <option value="16px">16px</option>
+                    <option value="17px">17px</option>
+                    <option value="18px" selected>18px</option>
+                    <option value="19px">19px</option>
+                    <option value="20px">20px</option>
+                    <option value="21px">21px</option>
+                    <option value="22px">22px</option>
+                    <option value="23px">23px</option>
+                    <option value="24px">24px</option>
+                    <option value="26px">26px</option>
+                    <option value="28px">28px</option>
+                    <option value="30px">30px</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.quick_button_size">Размер быстрых кнопок</label>
+                <select class="form-control" id="desktopFontQuickButtonSize" onchange="setDirty()">
+                    <option value="10px">10px</option>
+                    <option value="11px">11px</option>
+                    <option value="12px">12px</option>
+                    <option value="13px" selected>13px</option>
+                    <option value="14px">14px</option>
+                    <option value="15px">15px</option>
+                    <option value="16px">16px</option>
+                    <option value="17px">17px</option>
+                    <option value="18px">18px</option>
+                    <option value="19px">19px</option>
+                    <option value="20px">20px</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid d-none" id="fontSizesMobile">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.message_size_mobile">Размер текста сообщений (мобильный)</label>
+                <select class="form-control" id="mobileFontMessageSize" onchange="setDirty()">
+                    <option value="12px">12px</option>
+                    <option value="13px">13px</option>
+                    <option value="14px">14px</option>
+                    <option value="15px">15px</option>
+                    <option value="16px" selected>16px</option>
+                    <option value="17px">17px</option>
+                    <option value="18px">18px</option>
+                    <option value="19px">19px</option>
+                    <option value="20px">20px</option>
+                    <option value="21px">21px</option>
+                    <option value="22px">22px</option>
+                    <option value="23px">23px</option>
+                    <option value="24px">24px</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.header_size_mobile">Размер заголовка (мобильный)</label>
+                <select class="form-control" id="mobileFontHeaderSize" onchange="setDirty()">
+                    <option value="14px">14px</option>
+                    <option value="15px">15px</option>
+                    <option value="16px" selected>16px</option>
+                    <option value="17px">17px</option>
+                    <option value="18px">18px</option>
+                    <option value="19px">19px</option>
+                    <option value="20px">20px</option>
+                    <option value="21px">21px</option>
+                    <option value="22px">22px</option>
+                    <option value="23px">23px</option>
+                    <option value="24px">24px</option>
+                    <option value="26px">26px</option>
+                    <option value="28px">28px</option>
+                    <option value="30px">30px</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.quick_button_size_mobile">Размер быстрых кнопок (мобильный)</label>
+                <select class="form-control" id="mobileFontQuickButtonSize" onchange="setDirty()">
+                    <option value="10px">10px</option>
+                    <option value="11px">11px</option>
+                    <option value="12px">12px</option>
+                    <option value="13px">13px</option>
+                    <option value="14px" selected>14px</option>
+                    <option value="15px">15px</option>
+                    <option value="16px">16px</option>
+                    <option value="17px">17px</option>
+                    <option value="18px">18px</option>
+                    <option value="19px">19px</option>
+                    <option value="20px">20px</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🎭</span> <span data-i18n="appearance.theme_title">Тема конфигурации</span>
+        </h3>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.theme_mode">Режим темы</label>
+                <select class="form-control" id="themeModeSelect" onchange="setDirty()">
+                    <option value="auto" data-i18n="appearance.theme_auto">Автоматическая (следует системе)</option>
+                    <option value="light" data-i18n="appearance.theme_light">Всегда светлая</option>
+                    <option value="dark" data-i18n="appearance.theme_dark">Всегда тёмная</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="appearance.theme_preferred">Предпочтительная схема</label>
+                <select class="form-control" id="themePreferredSchemeSelect" onchange="setDirty()">
+                    <option value="auto" data-i18n="theme.auto">Автоматически</option>
+                    <option value="light" data-i18n="theme.light">Светлая</option>
+                    <option value="dark" data-i18n="theme.dark">Тёмная</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-icon">ℹ️</div>
+            <div class="info-box-content" data-i18n="appearance.theme_info">
+                Эта настройка темы будет использоваться только если в глобальных настройках разрешены индивидуальные темы для конфигураций.
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🎯</span> <span data-i18n="widget.title">Настройки виджета свернутого чата</span>
+        </h3>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="widget.type">Тип виджета</label>
+            <div class="widget-type-grid" id="widgetTypeGrid">
+                <!-- Widget type cards will be populated here -->
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="widget.animation_speed">Скорость анимации (секунды)</label>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <input type="range" class="form-range" id="widgetAnimationSpeed" min="0.5" max="5" step="0.1" value="2" oninput="updateWidgetSpeedValue(this.value); setDirty();">
+                    <span id="widgetAnimationSpeedValue" style="color: #6b7280; min-width: 40px;">2s</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="widget.size">Размер виджета (px)</label>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <input type="range" class="form-range" id="widgetSize" min="50" max="120" step="5" value="70" oninput="updateWidgetSizeValue(this.value); setDirty();">
+                    <span id="widgetSizeValue" style="color: #6b7280; min-width: 50px;">70px</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="widget.primary_color">Основной цвет</label>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" id="widgetPrimaryColorPreview" style="background: #667eea" onclick="pickColor('widgetPrimaryColor')"></div>
+                    <input type="color" id="widgetPrimaryColorInput" value="#667eea" style="display: none;" onchange="updateColorFromPicker('widgetPrimaryColor'); setDirty();">
+                    <span id="widgetPrimaryColorValue" style="margin-left: 10px; color: #6b7280;">#667eea</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="widget.icon">Иконка виджета</label>
+                <input type="text" class="form-control" id="widgetIcon" value="💬" maxlength="2" placeholder="💬" onchange="updateSwitcherLabelIcon()" oninput="updateSwitcherLabelIcon()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="widget.positioning">Позиционирование виджета</label>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 13px;" data-i18n="widget.position">Позиция</label>
+                    <select class="form-control" id="widgetPosition" onchange="setDirty()">
+                        <option value="bottom-right" data-i18n="widget.pos_bottom_right">Внизу справа</option>
+                        <option value="bottom-left" data-i18n="widget.pos_bottom_left">Внизу слева</option>
+                        <option value="top-right" data-i18n="widget.pos_top_right">Вверху справа</option>
+                        <option value="top-left" data-i18n="widget.pos_top_left">Вверху слева</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="widget.margins">Отступы виджета (px)</label>
+            <div class="form-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 13px;" data-i18n="appearance.margin_top">Сверху</label>
+                    <input type="number" class="form-control" id="widgetMarginTop" value="20" min="0" onchange="setDirty()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 13px;" data-i18n="appearance.margin_right">Справа</label>
+                    <input type="number" class="form-control" id="widgetMarginRight" value="60" min="0" onchange="setDirty()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 13px;" data-i18n="appearance.margin_bottom">Снизу</label>
+                    <input type="number" class="form-control" id="widgetMarginBottom" value="10" min="0" onchange="setDirty()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 13px;" data-i18n="appearance.margin_left">Слева</label>
+                    <input type="number" class="form-control" id="widgetMarginLeft" value="20" min="0" onchange="setDirty()">
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-icon">ℹ️</div>
+            <div class="info-box-content" data-i18n="widget.info">
+                Виджет свернутого чата - это анимированная кнопка, которая отображается когда чат закрыт. Выберите один из 20 стилей виджета и настройте его параметры.
+            </div>
+        </div>
+    </div>
+</div>
+                    <!-- Вкладка: Поведение -->
+<div class="tab-content" id="tab-behavior">
+    <div class="settings-section">
+    <h3 class="settings-section-title">
+        <span>⚙️</span> <span data-i18n="behavior.main_title">Основное поведение</span>
+    </h3>
+
+    <div class="toggle-wrapper">
+    <div class="toggle-info">
+        <div class="toggle-label" data-i18n="behavior.auto_open">Автоматическое открытие</div>
+        <div class="toggle-description" data-i18n="behavior.auto_open_desc">Открывать чат при загрузке страницы</div>
+    </div>
+    <div class="toggle-switch" id="autoOpenToggle" onclick="toggleSwitch(this)">
+        <div class="toggle-slider"></div>
+    </div>
+</div>
+
+<!-- ✅ Поле задержки - появляется только при включенном автооткрытии -->
+<div class="form-group" id="autoOpenDelayGroup" style="display: none; margin-top: 15px; margin-bottom: 15px;">
+    <label class="form-label" data-i18n="behavior.auto_open_delay">Задержка автооткрытия (миллисекунды)</label>
+    <input type="number" class="form-control" id="autoOpenDelayInput" value="10000" min="0" step="1000" onchange="setDirty()">
+    <div class="form-hint" data-i18n="behavior.auto_open_delay_hint">1000 мс = 1 секунда. Задержка перед автоматическим открытием чата</div>
+</div>
+
+    <div class="toggle-wrapper">
+        <div class="toggle-info">
+            <div class="toggle-label" data-i18n="behavior.auto_focus">Автофокус</div>
+            <div class="toggle-description" data-i18n="behavior.auto_focus_desc">Ставить курсор в поле ввода</div>
+        </div>
+        <div class="toggle-switch active" id="autoFocusToggle" onclick="toggleSwitch(this)">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+
+    <div class="toggle-wrapper">
+        <div class="toggle-info">
+            <div class="toggle-label" data-i18n="behavior.show_welcome">Показывать приветствие</div>
+            <div class="toggle-description" data-i18n="behavior.show_welcome_desc">Отображать приветственное сообщение</div>
+        </div>
+        <div class="toggle-switch active" id="showWelcomeToggle" onclick="toggleSwitch(this)">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+
+    <div class="toggle-wrapper">
+        <div class="toggle-info">
+            <div class="toggle-label" data-i18n="behavior.show_quick_buttons">Быстрые кнопки</div>
+            <div class="toggle-description" data-i18n="behavior.show_quick_buttons_desc">Показывать панель быстрых кнопок</div>
+        </div>
+        <div class="toggle-switch active" id="showQuickButtonsToggle" onclick="toggleSwitch(this)">
+            <div class="toggle-slider"></div>
+        </div>
+    </div>
+</div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🎤</span> <span data-i18n="voice.title">Голосовые сообщения</span>
+        </h3>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="voice.enable">Включить голосовые сообщения</div>
+                <div class="toggle-description" data-i18n="voice.enable_desc">Позволяет пользователям отправлять голосовые сообщения</div>
+            </div>
+            <div class="toggle-switch active" id="enableVoiceToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="voice.max_duration">Максимальная длительность (сек)</label>
+                <input type="number" class="form-control" id="maxVoiceDurationInput" value="600" onchange="setDirty()">
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="voice.format">Формат файлов</label>
+                <select class="form-control" id="voiceFormatSelect" onchange="setDirty()">
+                    <option value="ogg">OGG</option>
+                    <option value="mp3">MP3</option>
+                    <option value="wav">WAV</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>📁</span> <span data-i18n="files.title">Загрузка файлов</span>
+        </h3>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="files.enable">Разрешить загрузку файлов</div>
+                <div class="toggle-description" data-i18n="files.enable_desc">Показывать кнопку прикрепления файлов</div>
+            </div>
+            <div class="toggle-switch active" id="enableFileUploadToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="files.max_size">Максимальный размер файла (MB)</label>
+            <input type="number" class="form-control" id="maxFileSizeInput" value="10" onchange="setDirty()">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="files.allowed_types">Разрешённые типы файлов</label>
+            <div class="list-editor">
+                <label class="d-flex align-center gap-2">
+    <input type="checkbox" checked id="allowImages" onchange="setDirty()"> <span data-i18n="files.type_images">Изображения (JPEG, PNG, GIF, WebP)</span>
+</label>
+<label class="d-flex align-center gap-2">
+    <input type="checkbox" checked id="allowPDF" onchange="setDirty()"> <span data-i18n="files.type_pdf">PDF документы</span>
+</label>
+<label class="d-flex align-center gap-2">
+    <input type="checkbox" checked id="allowText" onchange="setDirty()"> <span data-i18n="files.type_text">Текстовые файлы (TXT, CSV)</span>
+</label>
+<label class="d-flex align-center gap-2">
+    <input type="checkbox" checked id="allowOffice" onchange="setDirty()"> <span data-i18n="files.type_office">Microsoft Office (DOC, XLS)</span>
+</label>
+            </div>
+        </div>
+    </div>
+
+   <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>💾</span> <span data-i18n="history.title">История чата</span>
+        </h3>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="history.save">Сохранять историю</div>
+                <div class="toggle-description" data-i18n="history.save_desc">Сохранять переписку между сессиями</div>
+            </div>
+            <div class="toggle-switch active" id="saveHistoryToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="history.quick_collapsed">Быстрые кнопки свернуты</div>
+                <div class="toggle-description" data-i18n="history.quick_collapsed_desc">Сворачивать панель быстрых кнопок по умолчанию</div>
+            </div>
+            <div class="toggle-switch active" id="quickButtonsCollapsedToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="history.paste_images">Вставка изображений</div>
+                <div class="toggle-description" data-i18n="history.paste_images_desc">Разрешить вставку изображений через Ctrl+V</div>
+            </div>
+            <div class="toggle-switch active" id="enablePasteImagesToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="history.show_input">Показывать поле ввода</div>
+                <div class="toggle-description" data-i18n="history.show_input_desc">Отображать область для ввода сообщений</div>
+            </div>
+            <div class="toggle-switch active" id="showInputAreaToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="toggle-wrapper mb-3">
+            <div class="toggle-info">
+                <div class="toggle-label" data-i18n="history.popout_mode">Режим отдельного окна</div>
+                <div class="toggle-description" data-i18n="history.popout_mode_desc">Включить кнопку открытия чата в отдельном окне</div>
+            </div>
+            <div class="toggle-switch active" id="enablePopoutModeToggle" onclick="toggleSwitch(this)">
+                <div class="toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="history.lifetime">Время хранения (часов)</label>
+                <input type="number" class="form-control" id="historyLifetimeInput" value="72" onchange="setDirty()">
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="history.max_messages">Максимум сообщений</label>
+                <input type="number" class="form-control" id="maxHistoryMessagesInput" value="50" onchange="setDirty()">
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🪟</span> <span data-i18n="popout.title">Размеры отдельного окна</span>
+        </h3>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="popout.width">Ширина окна (px)</label>
+                <input type="number" class="form-control" id="popoutWindowWidthInput" value="500" min="300" max="1200" onchange="setDirty()">
+                <div class="form-hint" data-i18n="popout.width_hint">Ширина отдельного окна чата в пикселях</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="popout.height">Высота окна (px)</label>
+                <input type="number" class="form-control" id="popoutWindowHeightInput" value="770" min="400" max="1000" onchange="setDirty()">
+                <div class="form-hint" data-i18n="popout.height_hint">Высота отдельного окна чата в пикселях</div>
+            </div>
+        </div>
+    </div>
+</div>
+                   <!-- Вкладка: Технические -->
+<div class="tab-content" id="tab-technical">
+    <!-- ============================================ -->
+    <!-- ТЕХНИЧЕСКИЕ ПАРАМЕТРЫ -->
+    <!-- ============================================ -->
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🔧</span> <span data-i18n="technical.title">Технические параметры</span>
+        </h3>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" data-i18n="technical.request_timeout">Таймаут запросов (мс)</label>
+                <input type="number" class="form-control" id="requestTimeoutInput" value="300000" onchange="setDirty()">
+                <div class="form-hint" data-i18n="technical.request_timeout_hint">Максимальное время ожидания ответа от сервера</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" data-i18n="technical.max_message_length">Максимальная длина сообщения</label>
+                <input type="number" class="form-control" id="maxMessageLengthInput" value="1000" onchange="setDirty()">
+                <div class="form-hint" data-i18n="technical.max_message_length_hint">Максимальное количество символов в одном сообщении</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="technical.api_url">URL API (Webhook n8n)</label>
+            <input type="url" class="form-control" id="aiCoreUrlInput" placeholder="https://n8n.cryptomator.pro/webhook/webchat-api" value="https://n8n.cryptomator.pro/webhook/webchat-api" onchange="setDirty()">
+            <div class="form-hint" data-i18n="technical.api_url_hint">Адрес вебхука n8n для обработки сообщений</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ENDPOINTS (URL ВЕБХУКОВ) -->
+    <!-- ============================================ -->
+    <div class="settings-section">
+        <h3 class="settings-section-title">
+            <span>🌐</span> Endpoints (URL вебхуков)
+        </h3>
+        
+        <div class="form-group">
+            <label class="form-label" data-i18n="technical.voice_endpoint">Endpoint голосовых сообщений</label>
+            <input type="text" class="form-control" id="voiceUploadEndpoint" value="/upload-voice.php" onchange="setDirty()">
+            <div class="form-hint" data-i18n="technical.voice_endpoint_hint">URL для загрузки голосовых сообщений на сервер</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" data-i18n="technical.voice_download">Путь для скачивания голосовых</label>
+            <input type="text" class="form-control" id="voiceDownloadEndpoint" value="/voices/" onchange="setDirty()">
+            <div class="form-hint" data-i18n="technical.voice_download_hint">Базовый путь для скачивания голосовых файлов</div>
+        </div>
+    </div>
+</div>
+
+                    <!-- Вкладка: Предпросмотр -->
+<div class="tab-content" id="tab-preview">
+    <div class="settings-section">
+        <div class="settings-section-header">
+            <h3 class="settings-section-title">
+                <span>👁️</span> <span data-i18n="preview.title">Предпросмотр чата</span>
+            </h3>
+            <button class="btn btn-primary btn-sm" onclick="updatePreview()">
+                <span data-i18n="preview.refresh">🔄 Обновить предпросмотр</span>
+            </button>
+        </div>
+
+                            <div class="preview-container">
+                                <div class="preview-device desktop">
+                                    <div class="chat-preview">
+                                        <div class="chat-preview-header">
+                                            <div>
+                                                <h4>💰 FinBot</h4>
+                                                <small>Финансовый консультант</small>
+                                            </div>
+                                            <div style="display: flex; gap: 10px;">
+                                                <button style="background: none; border: none; color: white; cursor: pointer;">🌍</button>
+                                                <button style="background: none; border: none; color: white; cursor: pointer;">📞</button>
+                                                <button style="background: none; border: none; color: white; cursor: pointer;">−</button>
+                                            </div>
+                                        </div>
+                                        <div class="chat-preview-messages">
+                                            <div style="background: #f0f0f0; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                                                <strong>Добро пожаловать в банк! 💰</strong><br><br>
+                                                Я помогу с банковскими услугами и отвечу на финансовые вопросы.<br><br>
+                                                <b>Специализируюсь на:</b><br>
+                                                💳 Картах и счетах<br>
+                                                🏠 Кредитах и ипотеке<br>
+                                                📈 Инвестициях<br>
+                                                💼 Бизнес-услугах<br><br>
+                                                <i>Чем могу быть полезен?</i>
+                                            </div>
+                                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+                                                <button style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; background: white;">💳 Карты</button>
+                                                <button style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; background: white;">🏠 Кредиты</button>
+                                                <button style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; background: white;">📈 Инвестиции</button>
+                                                <button style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 20px; background: white;">👔 Менеджер</button>
+                                            </div>
+                                        </div>
+                                        <div class="chat-preview-input">
+                                            <input type="text" placeholder="Введите сообщение..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                                            <button style="padding: 10px; background: #667a22; color: white; border: none; border-radius: 8px;">🎤</button>
+                                            <button style="padding: 10px; background: #667a22; color: white; border: none; border-radius: 8px;">📎</button>
+                                            <button style="padding: 10px; background: #667a22; color: white; border: none; border-radius: 8px;">📤</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница: Все конфигурации -->
+            <div id="configurations-list" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h2 data-i18n="configs.title">📋 Управление конфигурациями</h2>
+                    <p data-i18n="configs.subtitle">Включайте, отключайте и настраивайте конфигурации чата</p>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn btn-primary" onclick="createNewConfig()">
+                            <span>➕</span> <span data-i18n="configs.create_new">Создать новую</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-secondary" onclick="importConfig()">
+                            <span>📥</span> <span data-i18n="configs.import">Импортировать</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="config-cards">
+                    <!-- Конфигурации загружаются динамически через loadConfigurationsList() -->
+                </div>
+            </div>
+            
+            <!-- ============================================ -->
+<!-- СТРАНИЦА: БАЗОВЫЕ НАСТРОЙКИ -->
+<!-- ============================================ -->
+<div id="base-settings" class="page-content" style="display: none;">
+    <div class="page-header">
+        <h2 data-i18n="base.title">⚙️ Базовые настройки</h2>
+        <p data-i18n="base.subtitle">Настройки по умолчанию для всех конфигураций</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-right">
+            <button class="btn btn-primary" onclick="saveBaseSettings()">
+                <span>💾</span> <span data-i18n="base.save_changes">Сохранить изменения</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ВКЛАДКИ -->
+    <!-- ============================================ -->
+    <div class="tabs">
+        <div class="tabs-header">
+            <button class="tab active" onclick="switchBaseTab('behavior')" data-i18n="base.tab_behavior">Поведение</button>
+            <button class="tab" onclick="switchBaseTab('appearance')" data-i18n="base.tab_appearance">Внешний вид</button>
+            <button class="tab" onclick="switchBaseTab('technical')" data-i18n="base.tab_technical">Технические</button>
+            <button class="tab" onclick="switchBaseTab('monitoring')" data-i18n="base.tab_monitoring">Мониторинг</button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ВКЛАДКА: ПОВЕДЕНИЕ -->
+        <!-- ============================================ -->
+        <div class="tab-content active" id="base-tab-behavior">
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🎛️</span> <span data-i18n="base.behavior.main_title">Основное поведение</span>
+                </h3>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.auto_open">Автоматическое открытие</div>
+                        <div class="toggle-description" data-i18n="base.behavior.auto_open_desc">Открывать чат при загрузке страницы</div>
+                    </div>
+                    <div class="toggle-switch" id="baseAutoOpenToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="baseAutoOpenDelayGroup" style="display: none; margin-top: 15px;">
+                    <label class="form-label" data-i18n="base.behavior.auto_open_delay">Задержка автооткрытия (миллисекунды)</label>
+                    <input type="number" class="form-control" id="baseAutoOpenDelayInput" value="10000" min="0" step="1000" onchange="setDirty()">
+                    <div class="form-hint" data-i18n="base.behavior.auto_open_delay_hint">1000 мс = 1 секунда</div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.auto_focus">Автофокус</div>
+                        <div class="toggle-description" data-i18n="base.behavior.auto_focus_desc">Ставить курсор в поле ввода</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseAutoFocusToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.show_welcome">Показывать приветствие</div>
+                        <div class="toggle-description" data-i18n="base.behavior.show_welcome_desc">Отображать приветственное сообщение</div>
+                    </div>
+                    <div class="toggle-switch" id="baseShowWelcomeToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.show_quick_buttons">Быстрые кнопки</div>
+                        <div class="toggle-description" data-i18n="base.behavior.show_quick_buttons_desc">Показывать панель быстрых кнопок</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseShowQuickButtonsToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.quick_buttons_collapsed">Быстрые кнопки свернуты</div>
+                        <div class="toggle-description" data-i18n="base.behavior.quick_buttons_collapsed_desc">Сворачивать панель быстрых кнопок по умолчанию</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseQuickButtonsCollapsedToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🎤</span> <span data-i18n="base.behavior.voice_files_title">Голосовые и файлы</span>
+                </h3>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.enable_voice">Включить голосовые сообщения</div>
+                        <div class="toggle-description" data-i18n="base.behavior.enable_voice_desc">Позволяет пользователям отправлять голосовые сообщения</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseEnableVoiceToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.enable_file_upload">Разрешить загрузку файлов</div>
+                        <div class="toggle-description" data-i18n="base.behavior.enable_file_upload_desc">Показывать кнопку прикрепления файлов</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseEnableFileUploadToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.paste_images">Вставка изображений (Ctrl+V)</div>
+                        <div class="toggle-description" data-i18n="base.behavior.paste_images_desc">Разрешить вставку изображений из буфера обмена</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseEnablePasteImagesToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.show_input_area">Показывать поле ввода</div>
+                        <div class="toggle-description" data-i18n="base.behavior.show_input_area_desc">Отображать область для ввода сообщений</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseShowInputAreaToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>💾</span> <span data-i18n="base.behavior.history_popout_title">История и отдельное окно</span>
+                </h3>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.save_history">Сохранять историю</div>
+                        <div class="toggle-description" data-i18n="base.behavior.save_history_desc">Сохранять переписку между сессиями</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseSaveHistoryToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.behavior.history_lifetime">Время хранения истории (часов)</label>
+                        <input type="number" class="form-control" id="baseHistoryLifetimeInput" value="72" min="1" onchange="setDirty()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.behavior.max_history_messages">Максимум сообщений в истории</label>
+                        <input type="number" class="form-control" id="baseMaxHistoryMessagesInput" value="50" min="1" onchange="setDirty()">
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.behavior.enable_popout_mode">Режим отдельного окна</div>
+                        <div class="toggle-description" data-i18n="base.behavior.enable_popout_mode_desc">Включить кнопку открытия чата в отдельном окне</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseEnablePopoutModeToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.behavior.popout_width">Ширина отдельного окна (px)</label>
+                        <input type="number" class="form-control" id="basePopoutWindowWidthInput" value="500" min="300" onchange="setDirty()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.behavior.popout_height">Высота отдельного окна (px)</label>
+                        <input type="number" class="form-control" id="basePopoutWindowHeightInput" value="770" min="400" onchange="setDirty()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ВКЛАДКА: ВНЕШНИЙ ВИД -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="base-tab-appearance">
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>📐</span> <span data-i18n="base.appearance.sizes_title">Размеры и позиционирование</span>
+                </h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.position">Позиция чата</label>
+                        <select class="form-control" id="basePositionSelect" onchange="setDirty()">
+                            <option value="bottom-right" data-i18n="base.appearance.pos_bottom_right">Справа внизу</option>
+                            <option value="bottom-left" data-i18n="base.appearance.pos_bottom_left">Слева внизу</option>
+                            <option value="top-right" data-i18n="base.appearance.pos_top_right">Справа вверху</option>
+                            <option value="top-left" data-i18n="base.appearance.pos_top_left">Слева вверху</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.width">Ширина чата (px)</label>
+                        <input type="number" class="form-control" id="baseWidthInput" value="450" min="300" onchange="setDirty()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.height">Высота чата (px)</label>
+                        <input type="number" class="form-control" id="baseHeightInput" value="700" min="400" onchange="setDirty()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.margins">Отступы от краёв экрана (px)</label>
+                    <div class="form-grid">
+                        <input type="number" class="form-control" id="baseMarginTop" data-i18n-placeholder="base.appearance.margin_top" placeholder="Сверху" value="20" onchange="setDirty()">
+                        <input type="number" class="form-control" id="baseMarginRight" data-i18n-placeholder="base.appearance.margin_right" placeholder="Справа" value="60" onchange="setDirty()">
+                        <input type="number" class="form-control" id="baseMarginBottom" data-i18n-placeholder="base.appearance.margin_bottom" placeholder="Снизу" value="10" onchange="setDirty()">
+                        <input type="number" class="form-control" id="baseMarginLeft" data-i18n-placeholder="base.appearance.margin_left" placeholder="Слева" value="20" onchange="setDirty()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🎭</span> <span data-i18n="base.appearance.theme_title">Тема конфигурации</span>
+                </h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.theme_mode">Режим темы</label>
+                        <select class="form-control" id="baseThemeModeSelect" onchange="setDirty()">
+                            <option value="auto" data-i18n="base.appearance.theme_auto">Автоматическая (следует системе)</option>
+                            <option value="light" data-i18n="base.appearance.theme_light">Всегда светлая</option>
+                            <option value="dark" data-i18n="base.appearance.theme_dark">Всегда тёмная</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.theme_preferred">Предпочтительная схема</label>
+                        <select class="form-control" id="baseThemePreferredSchemeSelect" onchange="setDirty()">
+                            <option value="auto" data-i18n="base.appearance.theme_preferred_auto">Автоматически</option>
+                            <option value="light" data-i18n="base.appearance.theme_preferred_light">Светлая</option>
+                            <option value="dark" data-i18n="base.appearance.theme_preferred_dark">Тёмная</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-icon">ℹ️</div>
+                    <div class="info-box-content" data-i18n="base.appearance.theme_info">
+                        Настройка темы по умолчанию для всех конфигураций. Может быть переопределена в индивидуальных настройках конфигурации.
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🎯</span> <span data-i18n="base.appearance.widget_title">Настройки виджета свернутого чата</span>
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.widget_type">Тип виджета</label>
+                    <div class="widget-type-grid" id="baseWidgetTypeGrid">
+                        <!-- Widget type cards will be populated here -->
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.widget_animation_speed">Скорость анимации (секунды)</label>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <input type="range" class="form-range" id="baseWidgetAnimationSpeed" min="0.5" max="5" step="0.1" value="2" oninput="updateBaseWidgetSpeedValue(this.value); setDirty();">
+                            <span id="baseWidgetAnimationSpeedValue" style="color: #6b7280; min-width: 40px;">2s</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.widget_size">Размер виджета (px)</label>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <input type="range" class="form-range" id="baseWidgetSize" min="50" max="120" step="5" value="70" oninput="updateBaseWidgetSizeValue(this.value); setDirty();">
+                            <span id="baseWidgetSizeValue" style="color: #6b7280; min-width: 50px;">70px</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.widget_primary_color">Основной цвет</label>
+                        <div class="color-picker-wrapper">
+                            <div class="color-preview" id="baseWidgetPrimaryColorPreview" style="background: #667eea" onclick="pickColor('baseWidgetPrimaryColor')"></div>
+                            <input type="color" id="baseWidgetPrimaryColorInput" value="#667eea" style="display: none;" onchange="updateColorFromPicker('baseWidgetPrimaryColor'); setDirty();">
+                            <span id="baseWidgetPrimaryColorValue" style="margin-left: 10px; color: #6b7280;">#667eea</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.widget_icon">Иконка виджета</label>
+                        <input type="text" class="form-control" id="baseWidgetIcon" value="💬" maxlength="2" placeholder="💬" onchange="setDirty()" oninput="setDirty()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.widget_positioning">Позиционирование виджета</label>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 13px;" data-i18n="base.appearance.widget_position">Позиция</label>
+                            <select class="form-control" id="baseWidgetPosition" onchange="setDirty()">
+                                <option value="bottom-right" data-i18n="base.appearance.widget_pos_bottom_right">Внизу справа</option>
+                                <option value="bottom-left" data-i18n="base.appearance.widget_pos_bottom_left">Внизу слева</option>
+                                <option value="top-right" data-i18n="base.appearance.widget_pos_top_right">Вверху справа</option>
+                                <option value="top-left" data-i18n="base.appearance.widget_pos_top_left">Вверху слева</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.widget_margins">Отступы виджета (px)</label>
+                    <div class="form-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 13px;" data-i18n="base.appearance.widget_margin_top">Сверху</label>
+                            <input type="number" class="form-control" id="baseWidgetMarginTop" value="20" min="0" onchange="setDirty()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 13px;" data-i18n="base.appearance.widget_margin_right">Справа</label>
+                            <input type="number" class="form-control" id="baseWidgetMarginRight" value="60" min="0" onchange="setDirty()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 13px;" data-i18n="base.appearance.widget_margin_bottom">Снизу</label>
+                            <input type="number" class="form-control" id="baseWidgetMarginBottom" value="10" min="0" onchange="setDirty()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="font-size: 13px;" data-i18n="base.appearance.widget_margin_left">Слева</label>
+                            <input type="number" class="form-control" id="baseWidgetMarginLeft" value="20" min="0" onchange="setDirty()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-icon">ℹ️</div>
+                    <div class="info-box-content" data-i18n="base.appearance.widget_info">
+                        Виджет свернутого чата - это анимированная кнопка, которая отображается когда чат закрыт. Выберите один из 20 стилей виджета и настройте его параметры.
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🎨</span> <span data-i18n="base.appearance.colors_title">Цвета</span>
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.header_gradient">Цвет шапки (градиент)</label>
+                    <div class="color-picker-wrapper">
+                        <div class="gradient-preview" id="baseHeaderGradientPreview" style="background: linear-gradient(135deg, #ff5400 0%, #764ba2 100%)"></div>
+                        <button class="btn btn-secondary btn-sm" onclick="showBaseGradientEditor()" data-i18n="base.appearance.change_gradient">Изменить градиент</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.header_text_color">Цвет текста в шапке</label>
+                    <div class="color-picker-wrapper">
+                        <div class="color-preview" id="baseHeaderTextColorPreview" style="background: #ffffff" onclick="pickColor('baseHeaderTextColor')"></div>
+                        <input type="color" id="baseHeaderTextColorInput" value="#ffffff" style="display: none;" onchange="updateColorFromPicker('baseHeaderTextColor'); setDirty();">
+                        <span id="baseHeaderTextColorValue" style="margin-left: 10px; color: #6b7280;">#ffffff</span>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.button_color">Цвет кнопок</label>
+                        <div class="color-picker-wrapper">
+                            <div class="color-preview" id="baseButtonColorPreview" style="background: #ff5400" onclick="pickColor('baseButtonColor')"></div>
+                            <input type="color" id="baseButtonColorInput" value="#ff5400" style="display: none;" onchange="updateColorFromPicker('baseButtonColor'); setDirty();">
+                            <span id="baseButtonColorValue" style="margin-left: 10px; color: #6b7280;">#ff5400</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.button_hover_color">Цвет кнопок при наведении</label>
+                        <div class="color-picker-wrapper">
+                            <div class="color-preview" id="baseButtonHoverColorPreview" style="background: #5a67d8" onclick="pickColor('baseButtonHoverColor')"></div>
+                            <input type="color" id="baseButtonHoverColorInput" value="#5a67d8" style="display: none;" onchange="updateColorFromPicker('baseButtonHoverColor'); setDirty();">
+                            <span id="baseButtonHoverColorValue" style="margin-left: 10px; color: #6b7280;">#5a67d8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.user_message_color">Цвет сообщений пользователя</label>
+                        <div class="color-picker-wrapper">
+                            <div class="color-preview" id="baseUserMessageColorPreview" style="background: #ff5400" onclick="pickColor('baseUserMessageColor')"></div>
+                            <input type="color" id="baseUserMessageColorInput" value="#ff5400" style="display: none;" onchange="updateColorFromPicker('baseUserMessageColor'); setDirty();">
+                            <span id="baseUserMessageColorValue" style="margin-left: 10px; color: #6b7280;">#ff5400</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.user_message_text_color">Цвет текста в сообщениях</label>
+                        <div class="color-picker-wrapper">
+                            <div class="color-preview" id="baseUserMessageTextColorPreview" style="background: #ffffff" onclick="pickColor('baseUserMessageTextColor')"></div>
+                            <input type="color" id="baseUserMessageTextColorInput" value="#ffffff" style="display: none;" onchange="updateColorFromPicker('baseUserMessageTextColor'); setDirty();">
+                            <span id="baseUserMessageTextColorValue" style="margin-left: 10px; color: #6b7280;">#ffffff</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🔤</span> <span data-i18n="base.appearance.fonts_title">Шрифты</span>
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.font_family">Семейство шрифтов</label>
+                    <select class="form-control" id="baseFontFamilySelect" onchange="setDirty()">
+                        <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif" data-i18n="base.appearance.font_system">Системный шрифт</option>
+                        <option value="'Roboto', sans-serif" selected>Roboto</option>
+                        <option value="'Inter', sans-serif">Inter</option>
+                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Lato', sans-serif">Lato</option>
+                        <option value="'Poppins', sans-serif">Poppins</option>
+                        <option value="'Raleway', sans-serif">Raleway</option>
+                        <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                        <option value="'Noto Sans', sans-serif">Noto Sans</option>
+                        <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                        <option value="'Nunito', sans-serif">Nunito</option>
+                        <option value="'PT Sans', sans-serif">PT Sans</option>
+                        <option value="'Work Sans', sans-serif">Work Sans</option>
+                        <option value="'Fira Sans', sans-serif">Fira Sans</option>
+                        <option value="'Josefin Sans', sans-serif">Josefin Sans</option>
+                        <option value="'Oswald', sans-serif">Oswald</option>
+                        <option value="'Merriweather', serif">Merriweather</option>
+                        <option value="'Playfair Display', serif">Playfair Display</option>
+                        <option value="'Georgia', serif">Georgia</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.appearance.font_platform">Платформа</label>
+                    <select class="form-control" onchange="switchBaseFontPlatform(this.value)">
+                        <option value="desktop" data-i18n="base.appearance.font_platform_desktop">Десктоп</option>
+                        <option value="mobile" data-i18n="base.appearance.font_platform_mobile">Мобильные устройства</option>
+                    </select>
+                </div>
+
+                <div class="form-grid" id="baseFontSizesDesktop">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.font_message_size">Размер текста сообщений</label>
+                        <select class="form-control" id="baseDesktopFontMessageSize" onchange="setDirty()">
+                            <option value="10px">10px</option>
+                            <option value="11px">11px</option>
+                            <option value="12px">12px</option>
+                            <option value="13px">13px</option>
+                            <option value="14px" selected>14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px">16px</option>
+                            <option value="17px">17px</option>
+                            <option value="18px">18px</option>
+                            <option value="19px">19px</option>
+                            <option value="20px">20px</option>
+                            <option value="21px">21px</option>
+                            <option value="22px">22px</option>
+                            <option value="23px">23px</option>
+                            <option value="24px">24px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.font_header_size">Размер заголовка</label>
+                        <select class="form-control" id="baseDesktopFontHeaderSize" onchange="setDirty()">
+                            <option value="12px">12px</option>
+                            <option value="13px">13px</option>
+                            <option value="14px">14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px">16px</option>
+                            <option value="17px">17px</option>
+                            <option value="18px" selected>18px</option>
+                            <option value="19px">19px</option>
+                            <option value="20px">20px</option>
+                            <option value="21px">21px</option>
+                            <option value="22px">22px</option>
+                            <option value="23px">23px</option>
+                            <option value="24px">24px</option>
+                            <option value="26px">26px</option>
+                            <option value="28px">28px</option>
+                            <option value="30px">30px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.font_quick_button_size">Размер быстрых кнопок</label>
+                        <select class="form-control" id="baseDesktopFontQuickButtonSize" onchange="setDirty()">
+                            <option value="10px">10px</option>
+                            <option value="11px">11px</option>
+                            <option value="12px">12px</option>
+                            <option value="13px" selected>13px</option>
+                            <option value="14px">14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px">16px</option>
+                            <option value="17px">17px</option>
+                            <option value="18px">18px</option>
+                            <option value="19px">19px</option>
+                            <option value="20px">20px</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid d-none" id="baseFontSizesMobile">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.font_message_size_mobile">Размер текста сообщений (мобильный)</label>
+                        <select class="form-control" id="baseMobileFontMessageSize" onchange="setDirty()">
+                            <option value="12px">12px</option>
+                            <option value="13px">13px</option>
+                            <option value="14px">14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px" selected>16px</option>
+                            <option value="17px">17px</option>
+                            <option value="18px">18px</option>
+                            <option value="19px">19px</option>
+                            <option value="20px">20px</option>
+                            <option value="21px">21px</option>
+                            <option value="22px">22px</option>
+                            <option value="23px">23px</option>
+                            <option value="24px">24px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.font_header_size_mobile">Размер заголовка (мобильный)</label>
+                        <select class="form-control" id="baseMobileFontHeaderSize" onchange="setDirty()">
+                            <option value="14px">14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px" selected>16px</option>
+                            <option value="17px">17px</option>
+                            <option value="18px">18px</option>
+                            <option value="19px">19px</option>
+                            <option value="20px">20px</option>
+                            <option value="21px">21px</option>
+                            <option value="22px">22px</option>
+                            <option value="23px">23px</option>
+                            <option value="24px">24px</option>
+                            <option value="26px">26px</option>
+                            <option value="28px">28px</option>
+                            <option value="30px">30px</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.appearance.font_quick_button_size_mobile">Размер быстрых кнопок (мобильный)</label>
+                        <select class="form-control" id="baseMobileFontQuickButtonSize" onchange="setDirty()">
+                            <option value="10px">10px</option>
+                            <option value="11px">11px</option>
+                            <option value="12px">12px</option>
+                            <option value="13px">13px</option>
+                            <option value="14px" selected>14px</option>
+                            <option value="15px">15px</option>
+                            <option value="16px">16px</option>
+                            <option value="17px">17px</option>
+                            <option value="18px">18px</option>
+                            <option value="19px">19px</option>
+                            <option value="20px">20px</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ВКЛАДКА: ТЕХНИЧЕСКИЕ -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="base-tab-technical">
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🔧</span> <span data-i18n="base.technical.params_title">Технические параметры</span>
+                </h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.technical.request_timeout">Таймаут запросов (мс)</label>
+                        <input type="number" class="form-control" id="baseRequestTimeoutInput" value="300000" min="1000" onchange="setDirty()">
+                        <div class="form-hint" data-i18n="base.technical.request_timeout_hint">Максимальное время ожидания ответа от сервера</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.technical.max_message_length">Максимальная длина сообщения</label>
+                        <input type="number" class="form-control" id="baseMaxMessageLengthInput" value="1000" min="100" onchange="setDirty()">
+                        <div class="form-hint" data-i18n="base.technical.max_message_length_hint">Максимальное количество символов</div>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.technical.debug_mode">Режим отладки</div>
+                        <div class="toggle-description" data-i18n="base.technical.debug_mode_desc">Выводить техническую информацию в консоль</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseDebugToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>🎤</span> <span data-i18n="base.technical.voice_title">Голосовые сообщения</span>
+                </h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.technical.voice_max_duration">Максимальная длительность (сек)</label>
+                        <input type="number" class="form-control" id="baseMaxVoiceDurationInput" value="600" min="10" onchange="setDirty()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="base.technical.voice_format">Формат файлов</label>
+                        <select class="form-control" id="baseVoiceFormatSelect" onchange="setDirty()">
+                            <option value="ogg" selected>OGG</option>
+                            <option value="mp3">MP3</option>
+                            <option value="wav">WAV</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.technical.voice_server_storage">Сохранение на сервер</div>
+                        <div class="toggle-description" data-i18n="base.technical.voice_server_storage_desc">Загружать голосовые на сервер</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseEnableServerStorageToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.technical.voice_upload_url">URL для загрузки голосовых</label>
+                    <input type="text" class="form-control" id="baseVoiceUploadEndpoint" value="/upload-voice.php" onchange="setDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.technical.voice_download_path">Путь для скачивания голосовых</label>
+                    <input type="text" class="form-control" id="baseVoiceDownloadEndpoint" value="/voices/" onchange="setDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.technical.voice_file_prefix">Префикс имени файла</label>
+                    <input type="text" class="form-control" id="baseVoiceFilePrefix" value="voice_message_" onchange="setDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.technical.voice_max_size">Максимальный размер (MB)</label>
+                    <input type="number" class="form-control" id="baseMaxVoiceSizeInput" value="5" min="1" onchange="setDirty()">
+                </div>
+
+                <div class="toggle-wrapper">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.technical.voice_local_fallback">Локальное сохранение при ошибке</div>
+                        <div class="toggle-description" data-i18n="base.technical.voice_local_fallback_desc">Сохранять локально если сервер недоступен</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseEnableLocalFallbackToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>📁</span> <span data-i18n="base.technical.files_title">Файлы</span>
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.technical.files_max_size">Максимальный размер файла (MB)</label>
+                    <input type="number" class="form-control" id="baseMaxFileSizeInput" value="10" min="1" onchange="setDirty()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.technical.files_allowed_types">Разрешённые типы файлов</label>
+                    <div class="list-editor">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" checked id="baseAllowImages" onchange="setDirty()"> <span data-i18n="base.technical.files_type_images">Изображения (JPEG, PNG, GIF, WebP, BMP)</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" checked id="baseAllowPDF" onchange="setDirty()"> <span data-i18n="base.technical.files_type_pdf">PDF документы</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" checked id="baseAllowText" onchange="setDirty()"> <span data-i18n="base.technical.files_type_text">Текстовые файлы (TXT, CSV)</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" checked id="baseAllowOffice" onchange="setDirty()"> <span data-i18n="base.technical.files_type_office">Microsoft Office (DOC, XLS)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- ВКЛАДКА: МОНИТОРИНГ -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="base-tab-monitoring">
+            <div class="settings-section">
+                <h3 class="settings-section-title">
+                    <span>📊</span> <span data-i18n="base.monitoring.title">Настройки мониторинга</span>
+                </h3>
+
+                <div class="info-box">
+                    <div class="info-box-icon">ℹ️</div>
+                    <div class="info-box-content" data-i18n="base.monitoring.info">
+                        Мониторинг позволяет отслеживать события чата и отправлять статистику на ваш n8n webhook для аналитики и автоматизации.
+                    </div>
+                </div>
+
+                <div class="toggle-wrapper mb-3">
+                    <div class="toggle-info">
+                        <div class="toggle-label" data-i18n="base.monitoring.enabled">Включить мониторинг</div>
+                        <div class="toggle-description" data-i18n="base.monitoring.enabled_desc">Отправлять данные о сессиях чата</div>
+                    </div>
+                    <div class="toggle-switch active" id="baseMonitoringEnabledToggle" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="base.monitoring.url">URL мониторинга (n8n webhook)</label>
+                    <input type="url" class="form-control" id="baseMonitoringUrlInput" value="https://n8n.cryptomator.pro/webhook/chat-monitoring" onchange="setDirty()">
+                    <div class="form-hint" data-i18n="base.monitoring.url_hint">Webhook для отправки статистики и событий чата</div>
+                </div>
+
+                <div class="warning-box">
+                    <div class="info-box-icon">⚠️</div>
+                    <div class="info-box-content">
+                        <strong data-i18n="base.monitoring.warning_title">Важно:</strong> <span data-i18n="base.monitoring.warning_text">Убедитесь, что ваш n8n webhook настроен на приём POST-запросов с данными мониторинга.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Страница: Брендирование -->
+            <div id="branding-settings" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h2 data-i18n="branding.title">🏷️ Брендирование веб-чата</h2>
+                    <p data-i18n="branding.subtitle">Настройте логотип и название вашей компании в веб-чате</p>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" onclick="saveBrandingSettings()">
+                            <span>💾</span> <span data-i18n="branding.save">Сохранить настройки</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>🎨</span> <span data-i18n="branding.main_settings">Основные настройки</span>
+                    </h3>
+
+                    <div class="toggle-wrapper">
+                        <div class="toggle-info">
+                            <div class="toggle-label" data-i18n="branding.enabled">Включить брендирование</div>
+                            <div class="toggle-description" data-i18n="branding.enabled_desc">Показывать логотип и название компании в чате</div>
+                        </div>
+                        <div class="toggle-switch" id="brandingEnabledToggle" onclick="toggleSwitch(this); updateBrandingPreview();">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="brandingLogoType" data-i18n="branding.logo_type">Тип логотипа</label>
+                        <select id="brandingLogoType" class="form-control" onchange="updateBrandingTypeFields(); updateBrandingPreview();">
+                            <option value="svg" data-i18n="branding.logo_type_svg">SVG код</option>
+                            <option value="icon" data-i18n="branding.logo_type_icon">Иконка (emoji)</option>
+                            <option value="image" data-i18n="branding.logo_type_image">URL изображения</option>
+                        </select>
+                        <div class="form-hint" data-i18n="branding.logo_type_hint">Выберите как отображать логотип</div>
+                    </div>
+
+                    <!-- SVG Logo Field -->
+                    <div class="form-group" id="brandingSvgField" style="display: block;">
+                        <label class="form-label" for="brandingLogoSvg" data-i18n="branding.logo_svg">SVG код логотипа</label>
+                        <textarea id="brandingLogoSvg" class="form-control" rows="8" placeholder="<svg>...</svg>" oninput="updateBrandingPreview()"></textarea>
+                        <div class="form-hint" data-i18n="branding.logo_svg_hint">Вставьте полный SVG код (включая теги &lt;svg&gt;...&lt;/svg&gt;). Пример: SVG логотип "Нейронная сеть" из logo.html</div>
+                    </div>
+
+                    <!-- Icon Field -->
+                    <div class="form-group" id="brandingIconField" style="display: none;">
+                        <label class="form-label" for="brandingIcon" data-i18n="branding.logo_icon">Иконка (emoji)</label>
+                        <input type="text" id="brandingIcon" class="form-control" placeholder="🤖" maxlength="2" oninput="updateBrandingPreview()">
+                        <div class="form-hint" data-i18n="branding.logo_icon_hint">Введите emoji иконку</div>
+                    </div>
+
+                    <!-- Image URL Field -->
+                    <div class="form-group" id="brandingImageField" style="display: none;">
+                        <label class="form-label" for="brandingImageUrl" data-i18n="branding.logo_image">URL изображения</label>
+                        <input type="url" id="brandingImageUrl" class="form-control" placeholder="https://example.com/logo.png" oninput="updateBrandingPreview()">
+                        <div class="form-hint" data-i18n="branding.logo_image_hint">Ссылка на изображение логотипа</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="brandingCompanyName" data-i18n="branding.company_name">Название компании</label>
+                        <input type="text" id="brandingCompanyName" class="form-control" placeholder="NexusMindAI" oninput="updateBrandingPreview()">
+                        <div class="form-hint" data-i18n="branding.company_name_hint">Будет отображаться рядом с логотипом</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="brandingCompanyUrl" data-i18n="branding.company_url">Ссылка на сайт компании (опционально)</label>
+                        <input type="url" id="brandingCompanyUrl" class="form-control" placeholder="https://example.com" oninput="updateBrandingPreview()">
+                        <div class="form-hint" data-i18n="branding.company_url_hint">Если указана, название компании станет кликабельной ссылкой</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="brandingPoweredByText" data-i18n="branding.powered_by">Текст "Powered by" (опционально)</label>
+                        <input type="text" id="brandingPoweredByText" class="form-control" placeholder="Powered by" oninput="updateBrandingPreview()">
+                        <div class="form-hint" data-i18n="branding.powered_by_hint">Текст перед названием компании. Оставьте пустым, чтобы не отображать</div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>📐</span> <span data-i18n="branding.sizes">Размеры</span>
+                    </h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="brandingLogoWidth" data-i18n="branding.logo_width">Ширина логотипа (px)</label>
+                            <input type="number" id="brandingLogoWidth" class="form-control" value="32" min="16" max="64" oninput="updateBrandingPreview()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="brandingLogoHeight" data-i18n="branding.logo_height">Высота логотипа (px)</label>
+                            <input type="number" id="brandingLogoHeight" class="form-control" value="32" min="16" max="64" oninput="updateBrandingPreview()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="brandingFontSize" data-i18n="branding.font_size">Размер шрифта (px)</label>
+                            <input type="number" id="brandingFontSize" class="form-control" value="12" min="8" max="20" oninput="updateBrandingPreview()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>👁️</span> <span data-i18n="branding.preview">Превью</span>
+                    </h3>
+
+                    <div style="background: #f3f4f6; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="text-align: center; margin-bottom: 15px; font-weight: 600; color: #6b7280;" data-i18n="branding.preview_light">
+                            Светлая тема
+                        </div>
+                        <div id="brandingPreviewLight" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                            <!-- Preview будет генерироваться через JavaScript -->
+                        </div>
+                    </div>
+
+                    <div style="background: #1f2937; padding: 30px; border-radius: 12px;">
+                        <div style="text-align: center; margin-bottom: 15px; font-weight: 600; color: #9ca3af;" data-i18n="branding.preview_dark">
+                            Темная тема
+                        </div>
+                        <div id="brandingPreviewDark" style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155;">
+                            <!-- Preview будет генерироваться через JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница: Экспорт/Импорт -->
+            <div id="export-import" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h2 data-i18n="export.title">📤 Экспорт и импорт конфигурации</h2>
+                    <p data-i18n="export.subtitle">Сохраняйте и переносите настройки между системами</p>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>📤</span> <span data-i18n="export.export_title">Экспорт конфигурации</span>
+                    </h3>
+
+                    <p class="text-muted mb-3" data-i18n="export.export_desc">Экспортируйте текущую конфигурацию в JavaScript файл для использования на сайте</p>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="export.what_to_export">Что экспортировать</label>
+                        <div class="list-editor">
+                            <label class="d-flex align-center gap-2">
+                                <input type="checkbox" checked> <span data-i18n="export.global_settings">Глобальные настройки</span>
+                            </label>
+                            <label class="d-flex align-center gap-2">
+                                <input type="checkbox" checked> <span data-i18n="export.all_configs">Все конфигурации</span>
+                            </label>
+                            <label class="d-flex align-center gap-2">
+                                <input type="checkbox" checked> <span data-i18n="export.interface_texts">Базовые тексты интерфейса</span>
+                            </label>
+                            <label class="d-flex align-center gap-2">
+                                <input type="checkbox"> <span data-i18n="export.minify_code">Минифицировать код</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3" style="flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="exportConfig()">
+                            <span data-i18n="export.btn_download">📥 Скачать webchat-config.js</span>
+                        </button>
+                        <button class="btn btn-success" onclick="exportCurrentConfig()" style="background: #10b981; border-color: #10b981;">
+                            <span data-i18n="export.btn_export_full">📤 Экспорт полного файла с текущими настройками</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="copyConfigToClipboard()">
+                            <span data-i18n="export.btn_copy">📋 Копировать в буфер</span>
+                        </button>
+                    </div>
+                    <div class="info-box mt-3">
+                        <div class="info-box-icon">💡</div>
+                        <div class="info-box-content" data-i18n="export.export_info">
+                            <strong>Скачать webchat-config.js</strong> - скачивает сохраненную конфигурацию с сервера как есть.<br>
+                            <strong>Экспорт полного файла с текущими настройками</strong> - создает полный рабочий файл webchat-config.js со всеми функциями, переводами и кодом, но с текущими настройками из формы (без сохранения на сервере). Идеально для создания индивидуальных конфигураций.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>📥</span> <span data-i18n="export.import_title">Импорт конфигурации</span>
+                    </h3>
+
+                    <p class="text-muted mb-3" data-i18n="export.import_desc">Загрузите существующий файл конфигурации для редактирования</p>
+
+                    <div class="warning-box">
+                        <div class="info-box-icon">⚠️</div>
+                        <div class="info-box-content" data-i18n="export.import_warning">
+                            Импорт заменит все текущие настройки. Рекомендуется сначала создать резервную копию.
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="importConfig()">
+                        <span data-i18n="export.btn_import">📤 Импортировать</span>
+                    </button>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>💾</span> <span data-i18n="export.backups_title">Резервные копии</span>
+                    </h3>
+
+                    <p class="text-muted mb-3" data-i18n="export.backups_desc">Автоматические резервные копии конфигурации</p>
+
+                    <div class="d-flex gap-3" style="margin-bottom: 15px;">
+                        <button class="btn btn-primary" onclick="createBackup()">
+                            <span data-i18n="export.btn_create_backup">💾 Создать резервную копию</span>
+                        </button>
+                    </div>
+
+                    <div class="list-editor" id="backupsList">
+                        <!-- Список резервных копий загружается динамически -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница: GDPR / Приватность -->
+            <div id="gdpr-settings" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h2 data-i18n="gdpr.title">🔒 GDPR и настройки приватности</h2>
+                    <p data-i18n="gdpr.subtitle">Управление соответствием GDPR и защитой данных пользователей</p>
+                </div>
+
+                <!-- Панель инструментов с кнопкой сохранения -->
+                <div class="toolbar">
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" onclick="saveGDPRSettings()">
+                            <span>💾</span> <span data-i18n="gdpr.save_changes">Сохранить изменения</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Основные настройки GDPR -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>⚙️</span> <span data-i18n="gdpr.main_settings">Основные настройки</span>
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprEnabled" onchange="updateGDPRSetting('enabled', this.checked)">
+                            <span data-i18n="gdpr.enable_gdpr">Включить GDPR режим</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.enable_gdpr_hint">Активирует все функции защиты данных и согласия</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.mode">Режим GDPR</label>
+                        <select class="form-select" id="gdprMode" onchange="updateGDPRSetting('mode', this.value)">
+                            <option value="strict" data-i18n="gdpr.mode_strict">Строгий (рекомендуется для ЕС)</option>
+                            <option value="standard" data-i18n="gdpr.mode_standard">Стандартный</option>
+                            <option value="minimal" data-i18n="gdpr.mode_minimal">Минимальный</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.privacy_url">URL политики конфиденциальности</label>
+                        <input type="url" class="form-input" id="gdprPrivacyUrl" placeholder="https://example.com/privacy" onchange="updateGDPRSetting('privacyPolicyUrl', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.terms_url">URL пользовательского соглашения</label>
+                        <input type="url" class="form-input" id="gdprTermsUrl" placeholder="https://example.com/terms" onchange="updateGDPRSetting('termsOfServiceUrl', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.cookie_url">URL политики cookies</label>
+                        <input type="url" class="form-input" id="gdprCookieUrl" placeholder="https://example.com/cookies" onchange="updateGDPRSetting('cookiePolicyUrl', this.value)">
+                    </div>
+                </div>
+
+                <!-- Баннер согласия -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>📋</span> <span data-i18n="gdpr.consent_banner">Баннер согласия</span>
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprBannerEnabled" checked onchange="updateGDPRSetting('consentBanner.enabled', this.checked)">
+                            <span data-i18n="gdpr.banner_enabled">Показывать баннер согласия</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprBannerBlock" checked onchange="updateGDPRSetting('consentBanner.blockChat', this.checked)">
+                            <span data-i18n="gdpr.banner_block">Блокировать чат до получения согласия</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.banner_position">Позиция баннера</label>
+                        <select class="form-select" id="gdprBannerPosition" onchange="updateGDPRSetting('consentBanner.position', this.value)">
+                            <option value="bottom" data-i18n="gdpr.position_bottom">Снизу</option>
+                            <option value="top" data-i18n="gdpr.position_top">Сверху</option>
+                            <option value="center" data-i18n="gdpr.position_center">По центру</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.expire_days">Срок действия согласия (дней)</label>
+                        <input type="number" class="form-input" id="gdprExpireDays" value="365" min="1" max="730" onchange="updateGDPRSetting('consentBanner.expireDays', parseInt(this.value))">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprShowDecline" checked onchange="updateGDPRSetting('consentBanner.showDeclineButton', this.checked)">
+                            <span data-i18n="gdpr.show_decline">Показывать кнопку "Отклонить"</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprShowPrivacyLink" checked onchange="updateGDPRSetting('consentBanner.showPrivacyLink', this.checked)">
+                            <span data-i18n="gdpr.show_privacy_link">Показывать ссылку на политику конфиденциальности</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprShowCookieLink" onchange="updateGDPRSetting('consentBanner.showCookieLink', this.checked)">
+                            <span data-i18n="gdpr.show_cookie_link">Показывать ссылку на политику Cookies</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.show_cookie_link_hint">Ссылка будет показана только если указан URL политики cookies выше</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprShowTermsLink" onchange="updateGDPRSetting('consentBanner.showTermsLink', this.checked)">
+                            <span data-i18n="gdpr.show_terms_link">Показывать ссылку на пользовательское соглашение</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.show_terms_link_hint">Ссылка будет показана только если указан URL соглашения выше</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprShowMonitoringInConsent" checked onchange="updateGDPRSetting('consentBanner.showMonitoringInConsent', this.checked)">
+                            <span data-i18n="gdpr.show_monitoring_consent">Показывать информацию о мониторинге диалогов</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.show_monitoring_consent_hint">Текст о мониторинге будет показан только если мониторинг включён в настройках</p>
+                    </div>
+                </div>
+
+                <!-- Pre-Chat форма -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>📝</span> <span data-i18n="gdpr.prechat_form">Pre-Chat форма</span>
+                    </h3>
+
+                    <div class="info-box mb-3">
+                        <div class="info-box-icon">💡</div>
+                        <div class="info-box-content" data-i18n="gdpr.prechat_info">
+                            Pre-Chat форма позволяет собирать данные пользователя перед началом чата.
+                            Данные отправляются через webhook для обработки в n8n или другой системе.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprPreChatEnabled" onchange="updateGDPRSetting('preChatForm.enabled', this.checked)">
+                            <span data-i18n="gdpr.prechat_enabled">Включить Pre-Chat форму</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.prechat_enabled_hint">По умолчанию отключена. Включите если нужно собирать данные пользователя</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprPreChatAfterConsent" checked onchange="updateGDPRSetting('preChatForm.showAfterConsent', this.checked)">
+                            <span data-i18n="gdpr.prechat_after_consent">Показывать после получения согласия</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprPreChatGdprCheckbox" checked onchange="updateGDPRSetting('preChatForm.gdprCheckbox.enabled', this.checked)">
+                            <span data-i18n="gdpr.prechat_gdpr_checkbox">Показывать чекбокс согласия на обработку данных</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.prechat_display_mode">Режим отображения формы</label>
+                        <select class="form-input" id="gdprPreChatDisplayMode" onchange="updateGDPRSetting('preChatForm.displayMode', this.value)">
+                            <option value="modal" data-i18n="gdpr.prechat_mode_modal">Модальное окно (popup)</option>
+                            <option value="inline" data-i18n="gdpr.prechat_mode_inline">Внутри чата (inline)</option>
+                        </select>
+                        <p class="form-hint" data-i18n="gdpr.prechat_display_mode_hint">Modal - всплывающее окно поверх чата, Inline - компактная форма внутри области сообщений</p>
+                    </div>
+
+                    <!-- Настройка полей Pre-Chat формы -->
+                    <div class="form-group mt-4">
+                        <label class="form-label" data-i18n="gdpr.prechat_fields_title">Поля формы</label>
+                        <p class="form-hint mb-3" data-i18n="gdpr.prechat_fields_hint">Настройте какие поля показывать и их параметры</p>
+                    </div>
+
+                    <!-- Поле: Имя -->
+                    <div class="settings-subsection">
+                        <div class="subsection-header" onclick="toggleSubsection(this)">
+                            <span class="subsection-icon">👤</span>
+                            <span class="subsection-title" data-i18n="gdpr.field_name">Имя</span>
+                            <span class="subsection-toggle">▼</span>
+                        </div>
+                        <div class="subsection-content">
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldNameEnabled" checked onchange="updatePreChatField('name', 'enabled', this.checked)">
+                                    <span data-i18n="gdpr.field_enabled">Включить поле</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldNameRequired" checked onchange="updatePreChatField('name', 'required', this.checked)">
+                                    <span data-i18n="gdpr.field_required">Обязательное поле</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Поле: Email -->
+                    <div class="settings-subsection">
+                        <div class="subsection-header" onclick="toggleSubsection(this)">
+                            <span class="subsection-icon">📧</span>
+                            <span class="subsection-title" data-i18n="gdpr.field_email">Email</span>
+                            <span class="subsection-toggle">▼</span>
+                        </div>
+                        <div class="subsection-content">
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldEmailEnabled" checked onchange="updatePreChatField('email', 'enabled', this.checked)">
+                                    <span data-i18n="gdpr.field_enabled">Включить поле</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldEmailRequired" checked onchange="updatePreChatField('email', 'required', this.checked)">
+                                    <span data-i18n="gdpr.field_required">Обязательное поле</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Поле: Телефон -->
+                    <div class="settings-subsection">
+                        <div class="subsection-header" onclick="toggleSubsection(this)">
+                            <span class="subsection-icon">📞</span>
+                            <span class="subsection-title" data-i18n="gdpr.field_phone">Телефон</span>
+                            <span class="subsection-toggle">▼</span>
+                        </div>
+                        <div class="subsection-content">
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldPhoneEnabled" checked onchange="updatePreChatField('phone', 'enabled', this.checked)">
+                                    <span data-i18n="gdpr.field_enabled">Включить поле</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldPhoneRequired" onchange="updatePreChatField('phone', 'required', this.checked)">
+                                    <span data-i18n="gdpr.field_required">Обязательное поле</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Поле: Компания -->
+                    <div class="settings-subsection">
+                        <div class="subsection-header" onclick="toggleSubsection(this)">
+                            <span class="subsection-icon">🏢</span>
+                            <span class="subsection-title" data-i18n="gdpr.field_company">Компания</span>
+                            <span class="subsection-toggle">▼</span>
+                        </div>
+                        <div class="subsection-content">
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldCompanyEnabled" onchange="updatePreChatField('company', 'enabled', this.checked)">
+                                    <span data-i18n="gdpr.field_enabled">Включить поле</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-flex align-center gap-2">
+                                    <input type="checkbox" id="gdprFieldCompanyRequired" onchange="updatePreChatField('company', 'required', this.checked)">
+                                    <span data-i18n="gdpr.field_required">Обязательное поле</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Disclosure -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>🤖</span> <span data-i18n="gdpr.ai_disclosure">AI Disclosure</span>
+                    </h3>
+
+                    <div class="info-box mb-3">
+                        <div class="info-box-icon">💡</div>
+                        <div class="info-box-content" data-i18n="gdpr.ai_disclosure_info">
+                            Информирование пользователя о том, что он общается с AI-ассистентом.
+                            Требуется по EU AI Act и рекомендуется для прозрачности.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprAIEnabled" checked onchange="updateGDPRSetting('aiDisclosure.enabled', this.checked)">
+                            <span data-i18n="gdpr.ai_enabled">Включить AI Disclosure</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprAIShowInWelcome" checked onchange="updateGDPRSetting('aiDisclosure.showInWelcome', this.checked)">
+                            <span data-i18n="gdpr.ai_show_in_welcome">Показывать в приветственном сообщении</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.ai_show_in_welcome_hint">Текст об AI будет добавлен в конец приветственного сообщения</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprAIShowInConsent" checked onchange="updateGDPRSetting('aiDisclosure.showInConsent', this.checked)">
+                            <span data-i18n="gdpr.ai_show_in_consent">Показывать в форме согласия</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.ai_show_in_consent_hint">Текст об AI будет показан в баннере согласия GDPR</p>
+                    </div>
+                </div>
+
+                <!-- Privacy Controls -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>🛡️</span> <span data-i18n="gdpr.privacy_controls">Контроль приватности</span>
+                    </h3>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprPrivacyEnabled" checked onchange="updateGDPRSetting('privacyControls.enabled', this.checked)">
+                            <span data-i18n="gdpr.privacy_enabled">Включить меню приватности</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.privacy_enabled_hint">Кнопка 🔒 появится в быстрых кнопках или отдельно если быстрые кнопки отключены</p>
+                    </div>
+
+                    <h4 style="margin: 15px 0 10px; font-size: 14px;" data-i18n="gdpr.available_options">Доступные опции для пользователя:</h4>
+
+                    <div class="list-editor">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprOptViewData" checked onchange="updateGDPRSetting('privacyControls.options.viewData', this.checked)">
+                            <span data-i18n="gdpr.opt_view_data">Просмотр своих данных</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprOptEditData" checked onchange="updateGDPRSetting('privacyControls.options.editData', this.checked)">
+                            <span data-i18n="gdpr.opt_edit_data">Редактирование данных</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprOptExportData" checked onchange="updateGDPRSetting('privacyControls.options.exportData', this.checked)">
+                            <span data-i18n="gdpr.opt_export_data">Экспорт данных (Data Portability)</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprOptDeleteHistory" checked onchange="updateGDPRSetting('privacyControls.options.deleteHistory', this.checked)">
+                            <span data-i18n="gdpr.opt_delete_history">Удаление истории чата</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprOptRevokeConsent" checked onchange="updateGDPRSetting('privacyControls.options.revokeConsent', this.checked)">
+                            <span data-i18n="gdpr.opt_revoke_consent">Отзыв согласия</span>
+                        </label>
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprOptDeleteAll" checked onchange="updateGDPRSetting('privacyControls.options.deleteAllData', this.checked)">
+                            <span data-i18n="gdpr.opt_delete_all">Удаление всех данных (Right to Erasure)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- История чата -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>💬</span> <span data-i18n="gdpr.chat_history">История чата</span>
+                    </h3>
+
+                    <div class="info-box mb-3">
+                        <div class="info-box-icon">🔐</div>
+                        <div class="info-box-content" data-i18n="gdpr.chat_history_info">
+                            Настройки хранения и защиты истории чата в браузере пользователя.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprEncryptLocal" onchange="updateGDPRSetting('chatHistory.encryptLocal', this.checked)">
+                            <span data-i18n="gdpr.encrypt_local">Шифровать историю чата в браузере</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.encrypt_local_hint">Включает клиентское шифрование истории чата в localStorage. Рекомендуется для повышенной безопасности.</p>
+                    </div>
+                </div>
+
+                <!-- Webhooks -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>🔗</span> <span data-i18n="gdpr.webhooks">Webhooks для n8n</span>
+                    </h3>
+
+                    <div class="info-box mb-3">
+                        <div class="info-box-icon">💡</div>
+                        <div class="info-box-content" data-i18n="gdpr.webhooks_info">
+                            Настройте URL-адреса для отправки данных о согласии, формах и операциях с данными.
+                            Эти webhook'и можно подключить к n8n для записи в PostgreSQL.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.webhook_consent">Webhook согласия</label>
+                        <input type="url" class="form-input" id="gdprWebhookConsent" placeholder="https://n8n.example.com/webhook/consent" onchange="updateGDPRSetting('webhooks.consent', this.value)">
+                        <p class="form-hint" data-i18n="gdpr.webhook_consent_hint">Вызывается при принятии/отклонении согласия</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.webhook_prechat">Webhook Pre-Chat формы</label>
+                        <input type="url" class="form-input" id="gdprWebhookPreChat" placeholder="https://n8n.example.com/webhook/prechat" onchange="updateGDPRSetting('webhooks.preChatForm', this.value)">
+                        <p class="form-hint" data-i18n="gdpr.webhook_prechat_hint">Вызывается при отправке Pre-Chat формы</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.webhook_data_access">Webhook запроса данных</label>
+                        <input type="url" class="form-input" id="gdprWebhookDataAccess" placeholder="https://n8n.example.com/webhook/data-access" onchange="updateGDPRSetting('webhooks.dataAccess', this.value)">
+                        <p class="form-hint" data-i18n="gdpr.webhook_data_access_hint">Вызывается когда пользователь запрашивает свои данные</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.webhook_data_export">Webhook экспорта данных</label>
+                        <input type="url" class="form-input" id="gdprWebhookDataExport" placeholder="https://n8n.example.com/webhook/data-export" onchange="updateGDPRSetting('webhooks.dataExport', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.webhook_data_delete">Webhook удаления данных</label>
+                        <input type="url" class="form-input" id="gdprWebhookDataDelete" placeholder="https://n8n.example.com/webhook/data-delete" onchange="updateGDPRSetting('webhooks.dataDelete', this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.webhook_consent_revoke">Webhook отзыва согласия</label>
+                        <input type="url" class="form-input" id="gdprWebhookConsentRevoke" placeholder="https://n8n.example.com/webhook/consent-revoke" onchange="updateGDPRSetting('webhooks.consentRevoke', this.value)">
+                        <p class="form-hint" data-i18n="gdpr.webhook_consent_revoke_hint">Вызывается когда пользователь отзывает своё согласие на обработку данных</p>
+                    </div>
+                </div>
+
+                <!-- Геолокация и автоопределение -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>🌍</span> <span data-i18n="gdpr.geolocation">Геолокация и автоопределение</span>
+                    </h3>
+
+                    <div class="info-box mb-3">
+                        <div class="info-box-icon">🌐</div>
+                        <div class="info-box-content" data-i18n="gdpr.geolocation_info">
+                            Автоматическое определение страны пользователя позволяет применять соответствующий режим GDPR.
+                            Для пользователей из ЕС будет автоматически применён строгий режим.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprGeoEnabled" onchange="updateGDPRSetting('advanced.geoLocation.enabled', this.checked)">
+                            <span data-i18n="gdpr.geo_enabled">Включить определение геолокации</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.geo_enabled_hint">Использовать сервис ipapi.co для определения страны посетителя</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="gdpr.detection_mode">Режим определения GDPR</label>
+                        <select class="form-select" id="gdprDetectionMode" onchange="updateGDPRSetting('advanced.geoLocation.detectionMode', this.value)">
+                            <option value="manual" data-i18n="gdpr.mode_manual">Ручной (использовать настройку режима выше)</option>
+                            <option value="auto" data-i18n="gdpr.mode_auto">Авто (определять по стране)</option>
+                            <option value="hybrid" data-i18n="gdpr.mode_hybrid">Гибрид (авто для ЕС, ручной для остальных)</option>
+                        </select>
+                        <p class="form-hint" data-i18n="gdpr.detection_mode_hint">Manual - всегда использовать выбранный режим, Auto - определять по стране, Hybrid - strict для ЕС, ручной для остальных</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="d-flex align-center gap-2">
+                            <input type="checkbox" id="gdprStrictForEU" checked onchange="updateGDPRSetting('advanced.geoLocation.strictForEU', this.checked)">
+                            <span data-i18n="gdpr.strict_for_eu">Строгий режим для стран ЕС</span>
+                        </label>
+                        <p class="form-hint" data-i18n="gdpr.strict_for_eu_hint">Автоматически применять strict режим для посетителей из Европейского Союза</p>
+                    </div>
+                </div>
+
+                <!-- Информация о совместимости -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title">
+                        <span>📚</span> <span data-i18n="gdpr.compliance_info">Информация о соответствии</span>
+                    </h3>
+
+                    <div class="info-box">
+                        <div class="info-box-icon">ℹ️</div>
+                        <div class="info-box-content" data-i18n="gdpr.compliance_text">
+                            <strong>GDPR (ЕС):</strong> Общий регламент защиты данных требует явного согласия, права на удаление и экспорт данных.<br><br>
+                            <strong>CCPA (Калифорния):</strong> California Consumer Privacy Act требует раскрытия практик сбора данных.<br><br>
+                            <strong>AI Act (ЕС):</strong> Требует раскрытия использования AI-систем при взаимодействии с пользователями.<br><br>
+                            <strong>Рекомендации:</strong> Для полного соответствия включите все опции и настройте webhook'и для логирования согласий в базу данных.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Индикатор сохранения -->
+        <div class="save-indicator" id="saveIndicator">
+            <span class="spinner"></span>
+            <span data-i18n="msg.saving">Сохранение...</span>
+        </div>
+
+        <!-- Emoji Picker Modal -->
+        <div class="emoji-picker-modal" id="emojiPickerModal">
+            <div class="emoji-picker-content">
+                <div class="emoji-picker-header">
+                    <h3 class="emoji-picker-title" data-i18n="emoji.title">Выбрать эмодзи</h3>
+                    <button class="modal-close" onclick="closeEmojiPicker()">×</button>
+                </div>
+                <div class="emoji-picker-search">
+                    <input type="text" class="emoji-search-input" id="emojiSearchInput" data-i18n-placeholder="placeholder.emoji_search" placeholder="Поиск эмодзи..." oninput="filterEmojis(this.value)">
+                </div>
+                <div class="emoji-picker-categories" id="emojiCategories">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+                <div class="emoji-picker-body" id="emojiPickerBody">
+                    <!-- Emojis will be populated by JavaScript -->
+                </div>
+                <div class="emoji-picker-footer" data-i18n="emoji.click_to_insert">
+                    Кликните на эмодзи, чтобы вставить
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</html>

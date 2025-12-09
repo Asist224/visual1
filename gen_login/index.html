@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>👥 <span data-i18n="headerTitle">User Management</span></h1>
+            <div class="user-info">
+                <!-- Language Selector -->
+                <div class="lang-selector">
+                    <label data-i18n="language">Language:</label>
+                    <select id="langSelect">
+                        <option value="ru">🇷🇺 Русский</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
+                </div>
+                <span id="currentUser">👤 admin</span>
+                <button class="logout-btn" onclick="logout()">🚪 <span data-i18n="logout">Logout</span></button>
+            </div>
+        </div>
+
+        <!-- Create User Panel -->
+        <div class="panel">
+            <h2 class="section-title">➕ <span data-i18n="addNewUser">Add New User</span></h2>
+            <form id="createUserForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username" data-i18n="usernameRequired">Username *</label>
+                        <input type="text" id="username" required minlength="3" data-i18n-placeholder="minChars3">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" data-i18n="passwordRequired">Password *</label>
+                        <input type="password" id="password" required minlength="6" data-i18n-placeholder="minChars6">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email" data-i18n="email">Email</label>
+                        <input type="email" id="email" data-i18n-placeholder="emailPlaceholder">
+                    </div>
+                    <div class="form-group">
+                        <label for="role" data-i18n="roleRequired">Role *</label>
+                        <select id="role" required>
+                            <option value="viewer">👁️ Viewer (read only)</option>
+                            <option value="manager">👔 Manager (management)</option>
+                            <option value="admin">👑 Admin (full access)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fullName" data-i18n="fullName">Full Name</label>
+                    <input type="text" id="fullName" data-i18n-placeholder="fullNamePlaceholder">
+                </div>
+                <button type="submit" class="btn btn-primary" id="createBtn">
+                    <span id="createBtnText">✨ <span data-i18n="createUser">Create User</span></span>
+                    <span id="createBtnSpinner" class="spinner" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Users List Panel -->
+        <div class="panel">
+            <div class="table-header">
+                <h2 class="section-title">📋 <span data-i18n="usersList">Users List</span></h2>
+                <button class="btn btn-success" onclick="loadUsers()">🔄 <span data-i18n="refresh">Refresh</span></button>
+            </div>
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="tableId">ID</th>
+                        <th data-i18n="tableUsername">Username</th>
+                        <th data-i18n="tableEmail">Email</th>
+                        <th data-i18n="tableRole">Role</th>
+                        <th data-i18n="tableFullName">Full Name</th>
+                        <th data-i18n="tableCreated">Created</th>
+                        <th data-i18n="tableLastLogin">Last Login</th>
+                        <th data-i18n="tableStatus">Status</th>
+                        <th data-i18n="tableActions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px;" data-i18n="loading">
+                            Loading data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scripts: Order matters! config -> i18n -> app -->
+    <script src="config.js"></script>
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

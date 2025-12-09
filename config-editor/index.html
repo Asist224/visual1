@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки конфигурации мониторинга</title>
+    <script src="cache-control.php?file=monitoring-config.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Настройки конфигурации мониторинга</h1>
+            <p style="margin-top: 10px; color: #6b7280;">
+                Визуальный редактор для настройки системы мониторинга чатов
+            </p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('general')">
+                🌐 Основные
+            </button>
+            <button class="tab" onclick="switchTab('display')">
+                👁️ Отображение
+            </button>
+            <button class="tab" onclick="switchTab('configurations')">
+                📋 Конфигурации
+            </button>
+            <button class="tab" onclick="switchTab('platforms')">
+                📱 Платформы
+            </button>
+            <button class="tab" onclick="switchTab('languages')">
+                🌍 Языки анализа
+            </button>
+            <button class="tab" onclick="switchTab('technical')">
+                🔧 Технические
+            </button>
+            <button class="tab" onclick="switchTab('crm')">
+    📊 CRM Интеграция
+</button>
+            <button class="tab" onclick="switchTab('branding')">
+                🏷️ Брендирование
+            </button>
+        </div>
+
+        <!-- Основные настройки -->
+        <div id="general-tab" class="tab-content active">
+            <div class="section">
+                <h2>🌍 Язык интерфейса</h2>
+                <div class="language-select" id="languageSelect">
+                    <!-- Языки будут добавлены динамически -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🎨 Тема оформления</h2>
+                <div class="form-group">
+                    <label>Выберите тему:</label>
+                    <select class="form-control" id="themeMode">
+                        <option value="light">☀️ Светлая</option>
+                        <option value="dark">🌙 Тёмная</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+       <!-- Настройки отображения -->
+<div id="display-tab" class="tab-content">
+    <!-- Фильтры -->
+    <div class="collapsible-section">
+        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+            <h2>🔍 Фильтры</h2>
+            <span class="collapsible-arrow">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div class="toggle-list" id="filterToggles">
+                <!-- Переключатели фильтров -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточки статистики -->
+    <div class="collapsible-section">
+        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+            <h2>📊 Карточки статистики</h2>
+            <span class="collapsible-arrow">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div class="toggle-list" id="statsToggles">
+                <!-- Переключатели карточек -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Графики -->
+    <div class="collapsible-section">
+        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+            <h2>📈 Графики</h2>
+            <span class="collapsible-arrow">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div class="toggle-list" id="chartsToggles">
+                <!-- Переключатели графиков -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Колонки таблицы -->
+    <div class="collapsible-section">
+        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+            <h2>📋 Колонки таблицы</h2>
+            <span class="collapsible-arrow">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div class="toggle-list" id="tableToggles">
+                <!-- Переключатели колонок -->
+            </div>
+        </div>
+    </div>
+    <!-- Email мониторинг -->
+<div class="collapsible-section">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <h2>📧 Email мониторинг</h2>
+        <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-content">
+        <div class="toggle-list">
+            <div class="toggle-item">
+                <div class="toggle-info">
+                    <span class="toggle-label">Включить таблицу Email пользователей</span>
+                </div>
+                <div class="toggle-switch" id="emailMonitoringToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+        <!-- Конфигурации -->
+        <div id="configurations-tab" class="tab-content">
+            <div class="section">
+                <h2>📋 Доступные конфигурации</h2>
+                <div class="toggle-list" id="configurationToggles">
+                    <!-- Переключатели конфигураций -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Платформы -->
+        <div id="platforms-tab" class="tab-content">
+            <div class="section">
+                <h2>📱 Доступные платформы</h2>
+                <div class="toggle-list" id="platformToggles">
+                    <!-- Переключатели платформ -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Языки анализа -->
+<div id="languages-tab" class="tab-content">
+    <!-- Языки для анализа диалогов -->
+    <div class="collapsible-section">
+        <div class="collapsible-header collapsed" onclick="toggleCollapsible(this)">
+            <h2>🌐 Языки для анализа диалогов</h2>
+            <span class="collapsible-arrow">▼</span>
+        </div>
+        <div class="collapsible-content collapsed">
+            <div class="toggle-list" id="analysisLanguageToggles">
+                <!-- Переключатели языков -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Синхронизация языка анализа -->
+<div class="collapsible-section">
+    <div class="collapsible-header collapsed" onclick="toggleCollapsible(this)">
+        <h2>🔄 Синхронизация языка анализа</h2>
+        <span class="collapsible-arrow">▼</span>
+    </div>
+    <div class="collapsible-content collapsed">
+        <div class="toggle-list">
+            <div class="toggle-item">
+                <div class="toggle-info">
+                    <span class="toggle-label">Автоматически синхронизировать язык анализа с языком интерфейса</span>
+                </div>
+                <div class="toggle-switch" id="analysisLanguageSyncToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 10px; padding: 0 15px;" id="analysisLanguageSyncHint">
+            При включении язык анализа диалогов будет автоматически меняться при смене языка интерфейса
+        </p>
+    </div>
+</div>
+
+    <!-- Выбор языка результата анализа -->
+    <div class="collapsible-section">
+        <div class="collapsible-header collapsed" onclick="toggleCollapsible(this)">
+            <h2>🌍 Выбор языка результата анализа диалога</h2>
+            <span class="collapsible-arrow">▼</span>
+        </div>
+        <div class="collapsible-content collapsed">
+            <div class="toggle-list" id="resultLanguageToggles">
+                <!-- Переключатели языков результата -->
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Технические настройки -->
+<div id="technical-tab" class="tab-content">
+    <div class="section">
+        <h2>⏱️ Интервалы и лимиты</h2>
+        <div class="form-group">
+            <label>Интервал автообновления (мс):</label>
+            <input type="number" class="form-control" id="refreshInterval" min="5000" step="1000">
+        </div>
+        <div class="form-group">
+            <label>Элементов на странице:</label>
+            <input type="number" class="form-control" id="itemsPerPage" min="10" max="100" step="10">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔑 API настройки</h2>
+        <div class="form-group">
+            <label>API ключ:</label>
+            <input type="text" class="form-control" id="webhookApiKey" placeholder="Введите API ключ для защиты вебхуков">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔗 Адреса вебхуков</h2>
+        <div class="url-inputs">
+            <div class="form-group">
+                <label>Данные мониторинга:</label>
+                <input type="url" class="form-control" id="dataEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Диалоги:</label>
+                <input type="url" class="form-control" id="dialogsEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Анализ диалогов:</label>
+                <input type="url" class="form-control" id="analyzeEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Настройки автоанализа:</label>
+                <input type="url" class="form-control" id="autoAnalysisSettingsEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Настройки очистки:</label>
+                <input type="url" class="form-control" id="cleanupSettingsEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Обновление настроек очистки:</label>
+                <input type="url" class="form-control" id="updateCleanupSettingsEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Получение анализа:</label>
+                <input type="url" class="form-control" id="getAnalysisEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Все анализы:</label>
+                <input type="url" class="form-control" id="getAllAnalysisEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Время сервера:</label>
+                <input type="url" class="form-control" id="serverTimeEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Извлечение контактов:</label>
+                <input type="url" class="form-control" id="extractContactsEndpoint">
+            </div>
+            <div class="form-group">
+                <label>Получение контактов:</label>
+                <input type="url" class="form-control" id="getContactsEndpoint">
+            </div>
+            <div class="form-group">
+    <label>Получение языка анализа:</label>
+    <input type="url" class="form-control" id="getAnalysisLanguageEndpoint">
+</div>
+<div class="form-group">
+    <label>Установка языка анализа:</label>
+    <input type="url" class="form-control" id="setAnalysisLanguageEndpoint">
+</div>
+<div class="form-group">
+    <label>Удаление сессии:</label>
+    <input type="url" class="form-control" id="deleteSessionEndpoint">
+</div>
+<div class="form-group">
+    <label>Удаление email записи:</label>
+    <input type="url" class="form-control" id="deleteEmailEndpoint">
+</div>
+<div class="form-group">
+    <label>Вход в систему (аутентификация):</label>
+    <input type="url" class="form-control" id="authLoginEndpoint">
+</div>
+<div class="form-group">
+    <label>Проверка токена (валидация):</label>
+    <input type="url" class="form-control" id="authValidateEndpoint">
+</div>
+        </div>
+    </div>
+    <!-- Email endpoints (показываются только если включен email мониторинг) -->
+<div id="emailEndpointsSection" style="display: none;">
+    <h3 style="margin-top: 30px; margin-bottom: 20px; color: var(--primary);">📧 Адреса вебхуков для Email мониторинга</h3>
+
+    <div class="form-group">
+        <label>Данные Email мониторинга:</label>
+        <input type="url" class="form-control" id="emailDataEndpoint">
+    </div>
+    <div class="form-group">
+        <label>Email диалоги:</label>
+        <input type="url" class="form-control" id="emailDialogsEndpoint">
+    </div>
+    <div class="form-group">
+        <label>Анализ Email диалога:</label>
+        <input type="url" class="form-control" id="analyzeEmailEndpoint">
+    </div>
+    <div class="form-group">
+        <label>Получение Email анализа:</label>
+        <input type="url" class="form-control" id="getEmailAnalysisEndpoint">
+    </div>
+    <div class="form-group">
+        <label>Все Email анализы:</label>
+        <input type="url" class="form-control" id="getAllEmailAnalysisEndpoint">
+    </div>
+    <div class="form-group">
+        <label>Извлечение Email контактов:</label>
+        <input type="url" class="form-control" id="extractEmailContactsEndpoint">
+    </div>
+    <div class="form-group">
+        <label>Получение данных Email контактов:</label>
+        <input type="url" class="form-control" id="getEmailContactsEndpoint">
+    </div>
+</div>
+</div>
+
+<!-- CRM Интеграция -->
+<div id="crm-tab" class="tab-content">
+    <div class="section">
+        <h2>📊 Основные настройки CRM</h2>
+        <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                <input type="checkbox" id="crmEnabled" style="width: 20px; height: 20px; cursor: pointer;">
+                <span style="font-size: 16px; font-weight: 500;">Включить интеграцию с CRM системой</span>
+            </label>
+        </div>
+
+        <div id="crmSettingsContent" style="margin-top: 20px; display: none;">
+            <h3 style="margin-bottom: 15px; color: var(--primary); font-size: 16px;">🔗 Адреса вебхуков</h3>
+
+            <div class="form-group">
+                <label>Отправка в CRM:</label>
+                <input type="url" class="form-control" id="sendToCRMEndpoint" placeholder="https://your-webhook-url.com/send-to-crm">
+            </div>
+
+            <div class="form-group">
+                <label>Статус CRM:</label>
+                <input type="url" class="form-control" id="crmStatusEndpoint" placeholder="https://your-webhook-url.com/crm-status">
+            </div>
+
+            <div class="form-group">
+                <label>Настройки CRM:</label>
+                <input type="url" class="form-control" id="crmSettingsEndpoint" placeholder="https://your-webhook-url.com/crm-settings">
+            </div>
+
+            <div class="form-group">
+                <label>Обновление настроек CRM:</label>
+                <input type="url" class="form-control" id="updateCRMSettingsEndpoint" placeholder="https://your-webhook-url.com/update-settings">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Вкладка: Брендирование -->
+<div id="branding-tab" class="tab-content">
+    <div class="section">
+        <h2>🏷️ Брендирование системы мониторинга</h2>
+        <p style="color: #6b7280; margin-bottom: 20px;">Настройте логотип и название вашей компании в системе мониторинга</p>
+
+        <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                <input type="checkbox" id="brandingEnabled" style="width: 20px; height: 20px; cursor: pointer;" onchange="updateBrandingPreview()">
+                <span style="font-size: 16px; font-weight: 500;">Включить брендирование</span>
+            </label>
+            <small style="color: #6b7280; margin-top: 5px; display: block;">Показывать логотип и название компании в правом нижнем углу таблицы пользователей</small>
+        </div>
+
+        <div id="brandingSettingsContent" style="margin-top: 20px;">
+            <h3 style="margin-bottom: 15px; color: var(--primary); font-size: 16px;">🎨 Основные настройки</h3>
+
+            <div class="form-group">
+                <label>Тип логотипа:</label>
+                <select id="brandingLogoType" class="form-control" onchange="updateBrandingTypeFields(); updateBrandingPreview();">
+                    <option value="svg">SVG код</option>
+                    <option value="icon">Иконка (emoji)</option>
+                    <option value="image">URL изображения</option>
+                </select>
+                <small style="color: #6b7280;">Выберите как отображать логотип</small>
+            </div>
+
+            <!-- SVG Logo Field -->
+            <div class="form-group" id="brandingSvgField" style="display: block;">
+                <label>SVG код логотипа:</label>
+                <textarea id="brandingLogoSvg" class="form-control" rows="8" placeholder="<svg>...</svg>" style="font-family: monospace; font-size: 12px; resize: both;" oninput="updateBrandingPreview()"></textarea>
+                <small style="color: #6b7280;">Вставьте полный SVG код (включая теги &lt;svg&gt;...&lt;/svg&gt;)</small>
+            </div>
+
+            <!-- Icon Field -->
+            <div class="form-group" id="brandingIconField" style="display: none;">
+                <label>Иконка (emoji):</label>
+                <input type="text" id="brandingIcon" class="form-control" placeholder="🤖" maxlength="2" oninput="updateBrandingPreview()">
+                <small style="color: #6b7280;">Введите emoji иконку</small>
+            </div>
+
+            <!-- Image URL Field -->
+            <div class="form-group" id="brandingImageField" style="display: none;">
+                <label>URL изображения:</label>
+                <input type="url" id="brandingImageUrl" class="form-control" placeholder="https://example.com/logo.png" oninput="updateBrandingPreview()">
+                <small style="color: #6b7280;">Ссылка на изображение логотипа</small>
+            </div>
+
+            <div class="form-group">
+                <label>Название компании:</label>
+                <input type="text" id="brandingCompanyName" class="form-control" placeholder="NexusMindAI" oninput="updateBrandingPreview()">
+                <small style="color: #6b7280;">Будет отображаться рядом с логотипом</small>
+            </div>
+
+            <div class="form-group">
+                <label>Ссылка на сайт компании (опционально):</label>
+                <input type="url" id="brandingCompanyUrl" class="form-control" placeholder="https://example.com" oninput="updateBrandingPreview()">
+                <small style="color: #6b7280;">Если указана, название компании станет кликабельной ссылкой</small>
+            </div>
+
+            <div class="form-group">
+                <label>Текст "Powered by" (опционально):</label>
+                <input type="text" id="brandingPoweredByText" class="form-control" placeholder="" oninput="updateBrandingPreview()">
+                <small style="color: #6b7280;">Текст перед названием компании. Оставьте пустым, чтобы не отображать</small>
+            </div>
+
+            <h3 style="margin: 20px 0 15px; color: var(--primary); font-size: 16px;">📐 Размеры</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div class="form-group">
+                    <label>Ширина логотипа (px):</label>
+                    <input type="number" id="brandingLogoWidth" class="form-control" value="32" min="16" max="64" oninput="updateBrandingPreview()">
+                </div>
+
+                <div class="form-group">
+                    <label>Высота логотипа (px):</label>
+                    <input type="number" id="brandingLogoHeight" class="form-control" value="32" min="16" max="64" oninput="updateBrandingPreview()">
+                </div>
+
+                <div class="form-group">
+                    <label>Размер шрифта (px):</label>
+                    <input type="number" id="brandingFontSize" class="form-control" value="12" min="8" max="20" oninput="updateBrandingPreview()">
+                </div>
+            </div>
+
+            <h3 style="margin: 20px 0 15px; color: var(--primary); font-size: 16px;">👁️ Превью</h3>
+
+            <div style="background: #f3f4f6; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+                <div style="text-align: center; margin-bottom: 15px; font-weight: 600; color: #6b7280;">
+                    Светлая тема
+                </div>
+                <div id="brandingPreviewLight" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; min-height: 80px; display: flex; align-items: center; justify-content: flex-end;">
+                    <!-- Preview будет генерироваться через JavaScript -->
+                </div>
+            </div>
+
+            <div style="background: #1f2937; padding: 30px; border-radius: 12px;">
+                <div style="text-align: center; margin-bottom: 15px; font-weight: 600; color: #9ca3af;">
+                    Темная тема
+                </div>
+                <div id="brandingPreviewDark" style="background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #334155; min-height: 80px; display: flex; align-items: center; justify-content: flex-end;">
+                    <!-- Preview будет генерироваться через JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Кнопки сохранения -->
+<div class="save-section">
+    <button class="btn btn-primary" onclick="saveConfiguration()">
+        💾 Сохранить изменения
+    </button>
+    <button class="btn btn-secondary" onclick="resetConfiguration()">
+        ↩️ Сбросить изменения
+    </button>
+    <button class="btn btn-secondary" onclick="exportConfiguration()">
+        📤 Экспортировать конфигурацию
+    </button>
+    <button class="btn btn-secondary" onclick="restoreFromBackup()">
+        📥 Восстановить из резерва
+    </button>
+    <button class="btn btn-danger" onclick="resetToDefaults()">
+        🔄 Сбросить на заводские
+    </button>
+</div>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        ✅ Настройки успешно сохранены!
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
