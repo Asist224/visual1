@@ -83,7 +83,6 @@ async function loadClients() {
             renderClients();
         }
     } catch (error) {
-        console.error('Error loading clients:', error);
     }
 }
 
@@ -604,7 +603,6 @@ function copyResetPassword(button) {
     try {
         success = document.execCommand('copy');
     } catch (err) {
-        console.error('Copy error:', err);
     } finally {
         document.body.removeChild(textArea);
     }

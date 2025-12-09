@@ -307,7 +307,6 @@
 
         // Проверяем загрузку конфигурации
         if (typeof VectorBaseConfig === 'undefined') {
-            console.error('❌ VectorBaseConfig не загружен!');
             alert('Ошибка: Файл конфигурации не загружен. Проверьте путь к vectorbase-config.js');
         }
 
@@ -337,7 +336,6 @@
 
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ Страница загружена, инициализация...');
             
             if (typeof VectorBaseConfig !== 'undefined' && VectorBaseConfig.currentLanguage) {
                 currentPageLanguage = VectorBaseConfig.currentLanguage;
@@ -350,7 +348,6 @@
 
         // Загрузка текущей конфигурации
         function loadCurrentConfiguration() {
-            console.log('📋 Загрузка конфигурации...');
             
             // Язык интерфейса
             createLanguageOptions();
@@ -752,7 +749,6 @@
                     alert('Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
                 alert('Ошибка при сохранении конфигурации: ' + error.message);
                 
                 if (confirm('Не удалось сохранить на сервер. Скачать файл конфигурации?')) {
@@ -792,7 +788,6 @@
                     
                     URL.revokeObjectURL(url);
                 } else {
-                    console.warn('Сервер недоступен, экспортируем упрощенную версию');
                     const configString = JSON.stringify(currentConfig, null, 2);
                     const blob = new Blob([configString], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
@@ -805,7 +800,6 @@
                     URL.revokeObjectURL(url);
                 }
             } catch (error) {
-                console.error('Ошибка экспорта:', error);
                 const configString = JSON.stringify(currentConfig, null, 2);
                 const blob = new Blob([configString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -1030,4 +1024,3 @@ window.VectorBaseConfig = VectorBaseConfig;`;
             }
         }
 
-        console.log('✅ Скрипт конфигурации загружен');

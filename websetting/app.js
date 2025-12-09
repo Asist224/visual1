@@ -381,7 +381,6 @@
                 'console.loading_technical': '🔧 Загрузка технических настроек',
                 'console.timeout': '✅ Таймаут:',
                 'console.max_length': '✅ Макс. длина:',
-                'console.debug_mode': '✅ Режим отладки:',
                 'console.technical_loaded': '✅ Технические настройки загружены',
                 'console.loading_additional': '🔧 Загрузка дополнительных настроек',
                 'console.loading_supported_langs': '🌍 Загрузка поддерживаемых языков...',
@@ -1249,7 +1248,6 @@
                 'console.loading_technical': '🔧 Loading technical settings',
                 'console.timeout': '✅ Timeout:',
                 'console.max_length': '✅ Max length:',
-                'console.debug_mode': '✅ Debug mode:',
                 'console.technical_loaded': '✅ Technical settings loaded',
                 'console.loading_additional': '🔧 Loading additional settings',
                 'console.loading_supported_langs': '🌍 Loading supported languages...',
@@ -1751,7 +1749,6 @@
 
         // Функция применения переводов ко всем элементам
         function applyTranslations() {
-            console.log('🌍 Applying UI translations for language:', currentUILanguage);
 
             // Переводим все элементы с data-i18n атрибутом
             document.querySelectorAll('[data-i18n]').forEach(element => {
@@ -1809,7 +1806,6 @@
                 }
             }
 
-            console.log('✅ UI translations applied');
         }
 
         // Функция переключения языка интерфейса
@@ -1817,7 +1813,6 @@
             currentUILanguage = lang;
             localStorage.setItem('uiLanguage', lang);
             applyTranslations();
-            console.log('🌍 UI language switched to:', lang);
         }
 
         // Применяем переводы при загрузке страницы
@@ -1840,7 +1835,6 @@
         // Функция отметки изменений
 function setDirty() {
     isDirty = true;
-    console.log(t('console.form_changed'));
 
     // ✅ НОВОЕ: Автоматическое обновление предпросмотра при изменениях
     // Используем debounce чтобы не вызывать слишком часто
@@ -1887,7 +1881,6 @@ function updateSwitcherLabelIcon() {
     }
 
     setDirty();
-    console.log(t('console.icon_updated'), switcherLabelInput.value);
 }
 
         // Мобильное меню
@@ -1968,10 +1961,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const currentData = collectConfigData();
                     if (currentData) {
                         window.pendingChanges[currentConfig] = currentData;
-                        console.log(t('console.unsaved_saved'), currentConfig);
                     }
                 } catch (e) {
-                    console.warn(t('console.save_failed'), e);
                 }
             }
 
@@ -2025,7 +2016,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function editConfig(configId) {
-    console.log(t('console.editing_config'), configId);
 
     // ✅ НОВОЕ: Сохраняем данные текущей конфигурации перед переключением на другую
     if (currentConfig && currentConfig !== configId && isDirty && typeof collectConfigData === 'function') {
@@ -2033,10 +2023,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentData = collectConfigData();
             if (currentData) {
                 window.pendingChanges[currentConfig] = currentData;
-                console.log(t('console.unsaved_saved'), currentConfig);
             }
         } catch (e) {
-            console.warn(t('console.save_failed'), e);
         }
     }
 
@@ -2053,7 +2041,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (editor) {
         editor.style.display = 'block';
     } else {
-        console.error(t('console.editor_not_found'));
         return;
     }
     
@@ -2137,7 +2124,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Загрузить данные конфигурации
     loadConfigData(configId);
 
-    console.log(t('console.editor_opened'), {
         configId,
         configName,
         configIcon,
@@ -2147,7 +2133,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Переключение вкладок
 function showTab(tabId) {
-    console.log(t('console.switching_tab'), tabId);
     
     // Снимаем активность со всех вкладок
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -2173,13 +2158,11 @@ function showTab(tabId) {
 
 // Функция выбора конфигурации (вызывается из меню)
 function selectConfig(configId) {
-    console.log(t('console.selecting_config'), configId);
     editConfig(configId);
 }
 
         function loadConfigData(configId) {
     try {
-        console.log(t('console.loading_config'), configId);
 
         let configData = null;
         let fromPendingChanges = false;
@@ -2188,16 +2171,13 @@ function selectConfig(configId) {
         if (window.pendingChanges && window.pendingChanges[configId]) {
             configData = window.pendingChanges[configId];
             fromPendingChanges = true;
-            console.log(t('console.loaded_unsaved'), configId);
         }
 
         // Если нет pendingChanges, загружаем из ChatConfigs
         if (!configData) {
             // Проверяем ChatConfigs
-            console.log(t('console.checking_chatconfigs'), typeof window.ChatConfigs);
 
             if (window.ChatConfigs) {
-                console.log(t('console.keys_in_chatconfigs'), Object.keys(window.ChatConfigs));
 
                 // Пробуем разные варианты имени
                 const variants = [
@@ -2207,38 +2187,29 @@ function selectConfig(configId) {
                     configId.charAt(0).toUpperCase() + configId.slice(1) // FinanceConfig
                 ];
 
-                console.log(t('console.trying_variants'), variants);
 
                 for (let variant of variants) {
                     if (window.ChatConfigs[variant]) {
                         configData = window.ChatConfigs[variant];
-                        console.log(t('console.found_via') + variant);
                         break;
                     }
                 }
             } else {
-                console.warn(t('console.chatconfigs_not_exist'));
             }
 
             // Если не нашли через ChatConfigs, пробуем напрямую через window
             if (!configData) {
-                console.log(t('console.trying_window') + configId);
                 configData = window[configId];
             }
         }
 
         // Если всё ещё не нашли
         if (!configData) {
-            console.error(t('console.config_not_found'), configId);
-            console.log(t('console.available_in_chatconfigs'), window.ChatConfigs ? Object.keys(window.ChatConfigs) : t('console.not_found'));
-            console.log(t('console.available_in_window'), Object.keys(window).filter(k => k.includes('Config')));
 
             showSaveIndicator('error', t('save.config_not_found').replace('{id}', configId));
             return;
         }
 
-        console.log(t('console.config_data_received') + (fromPendingChanges ? t('console.from_unsaved') : '') + ':', configData);
-        console.log(t('console.config_structure'), {
             configId: configData.configId,
             botInfo: configData.botInfo,
             hasTexts: !!configData.texts,
@@ -2261,7 +2232,6 @@ function selectConfig(configId) {
         loadTechnicalData(configData);
         loadAdditionalConfigData(configData);
 
-        console.log(t('console.all_sections_loaded'));
 
         // ✅ НОВОЕ: Автоматически обновляем предпросмотр после загрузки
         setTimeout(() => {
@@ -2271,73 +2241,54 @@ function selectConfig(configId) {
         }, 300);
 
     } catch (error) {
-        console.error(t('console.loading_error'), error);
-        console.error('Stack trace:', error.stack);
     }
 }
 
 // Загрузка текстов
 function loadTextsData(config) {
-    console.log(t('console.loading_texts'));
 
     const currentLang = document.querySelector('#textLanguageSelect')?.value || 'ru';
     const texts = config.texts?.[currentLang] || config.texts?.ru || {};
 
-    console.log(t('console.language'), currentLang, t('console.texts'), texts);
 
     // Название в шапке
     const headerTitleInput = document.getElementById('headerTitleInput');
     if (headerTitleInput && texts.headerTitle) {
         headerTitleInput.value = texts.headerTitle;
-        console.log(t('console.loaded_header_title'), texts.headerTitle);
     }
 
     // Подзаголовок
     const headerSubtitleInput = document.getElementById('headerSubtitleInput');
     if (headerSubtitleInput && texts.headerSubtitle !== undefined) {
         headerSubtitleInput.value = texts.headerSubtitle;
-        console.log(t('console.loaded_header_subtitle'), texts.headerSubtitle);
     }
 
     // Приветственное сообщение
     const welcomeEditor = document.querySelector('#welcomeMessageEditor');
     if (welcomeEditor && texts.welcomeMessage) {
         welcomeEditor.innerHTML = texts.welcomeMessage;
-        console.log(t('console.loaded_welcome'));
     }
 
-    console.log(t('console.texts_loaded'));
 }
 
 // Загрузка быстрых кнопок
 function loadQuickButtonsData(config) {
-    console.log(t('console.loading_quick_buttons'));
-    console.log(t('console.received_config'), config);
 
     const currentLang = document.querySelector('#textLanguageSelect')?.value || 'ru';
-    console.log(t('console.current_lang'), currentLang);
 
-    console.log('config.texts:', config.texts);
-    console.log('config.texts[currentLang]:', config.texts?.[currentLang]);
 
     // ✅ ИСПРАВЛЕНО: Проверяем, что quickButtons - это массив
     let quickButtons = config.texts?.[currentLang]?.quickButtons;
     if (!Array.isArray(quickButtons)) {
-        console.warn(t('console.quickbuttons_not_array'), typeof quickButtons, quickButtons);
         quickButtons = [];
     }
 
-    console.log(t('console.found_buttons'), quickButtons.length);
-    console.log(t('console.quick_buttons'), quickButtons);
 
     if (quickButtons.length === 0) {
-        console.warn(t('console.buttons_not_found'), currentLang);
-        console.log(t('console.try_russian'));
         let ruButtons = config.texts?.ru?.quickButtons;
         if (!Array.isArray(ruButtons)) {
             ruButtons = [];
         }
-        console.log(t('console.buttons_russian'), ruButtons);
     }
 
     // Загружаем в основной список (вкладка "Тексты")
@@ -2352,7 +2303,6 @@ function loadQuickButtonsData(config) {
                 const buttonElement = createQuickButtonElement(button.text, button.message);
                 container1.appendChild(buttonElement);
             });
-            console.log(t('console.loaded_buttons_texts'), quickButtons.length);
         }
     }
 
@@ -2368,7 +2318,6 @@ function loadQuickButtonsData(config) {
                 const buttonElement = createQuickButtonElement(button.text, button.message);
                 container2.appendChild(buttonElement);
             });
-            console.log(t('console.loaded_buttons_main'), quickButtons.length);
         }
     }
 }
@@ -2457,17 +2406,11 @@ function createQuickButtonElement(text, message) {
 
 // Загрузка контактов
 function loadContactsData(config) {
-    console.log(t('console.loading_contacts'));
-    console.log(t('console.received_config'), config);
-    console.log('config.contacts:', config.contacts);
 
     const contacts = config.contacts?.items || [];
-    console.log(t('console.found_contacts'), contacts.length);
-    console.log(t('console.contacts'), contacts);
 
     const container = document.querySelector('.contacts-editor');
     if (!container) {
-        console.warn(t('console.contacts_container_not_found'));
         return;
     }
 
@@ -2482,7 +2425,6 @@ function loadContactsData(config) {
         } else {
             contactsToggle.classList.remove('active');
         }
-        console.log(t('console.contacts_enabled'), config.contacts.enabled);
     }
 
     // Загружаем заголовок
@@ -2490,7 +2432,6 @@ function loadContactsData(config) {
     const currentLang = document.querySelector('#textLanguageSelect')?.value || 'ru';
     if (contactsTitle && config.contacts?.titles) {
         contactsTitle.value = config.contacts.titles[currentLang] || config.contacts.titles.ru || '';
-        console.log(t('console.contacts_title'), contactsTitle.value);
     }
 
     // Добавляем контакты
@@ -2501,7 +2442,6 @@ function loadContactsData(config) {
             const contactElement = createContactElement(contact);
             container.appendChild(contactElement);
         });
-        console.log(t('console.contacts_loaded'), contacts.length);
     }
 }
 
@@ -2561,7 +2501,6 @@ function createContactElement(contact) {
 
 // Загрузка настроек внешнего вида
 function loadAppearanceData(config) {
-    console.log(t('console.loading_appearance'));
     const appearance = config.appearance || {};
 
     // ============================================
@@ -2572,7 +2511,6 @@ function loadAppearanceData(config) {
     const appearancePositionSelect = document.getElementById('appearancePositionSelect');
     if (appearancePositionSelect && appearance.position) {
         appearancePositionSelect.value = appearance.position;
-        console.log(t('console.position'), appearance.position);
     }
     // Размеры (ширина и высота)
     const appearanceWidthInput = document.getElementById('appearanceWidthInput');
@@ -2583,7 +2521,6 @@ function loadAppearanceData(config) {
     if (appearanceHeightInput && appearance.dimensions) {
         appearanceHeightInput.value = appearance.dimensions.height || 560;
     }
-    console.log(t('console.dimensions'), appearance.dimensions);
 
     // Отступы от краёв экрана
     const appearanceMarginTop = document.getElementById('appearanceMarginTop');
@@ -2596,7 +2533,6 @@ function loadAppearanceData(config) {
         if (appearanceMarginRight) appearanceMarginRight.value = appearance.margins.right || 60;
         if (appearanceMarginBottom) appearanceMarginBottom.value = appearance.margins.bottom || 10;
         if (appearanceMarginLeft) appearanceMarginLeft.value = appearance.margins.left || 20;
-        console.log(t('console.margins'), appearance.margins);
     }
 
     // Размеры компактного режима
@@ -2605,7 +2541,6 @@ function loadAppearanceData(config) {
     if (appearance.compactMinimizedSize) {
         if (appearanceCompactWidth) appearanceCompactWidth.value = appearance.compactMinimizedSize.width || 200;
         if (appearanceCompactHeight) appearanceCompactHeight.value = appearance.compactMinimizedSize.height || 65;
-        console.log(t('console.compact_mode'), appearance.compactMinimizedSize);
     }
 
     // ============================================
@@ -2613,7 +2548,6 @@ function loadAppearanceData(config) {
     // ============================================
 
     if (appearance.colors) {
-        console.log(t('console.loading_colors'), appearance.colors);
         
         // Градиент шапки
         if (appearance.colors.header?.background) {
@@ -2684,7 +2618,6 @@ function loadAppearanceData(config) {
     // ============================================
 
     if (appearance.fonts) {
-        console.log(t('console.loading_fonts'), appearance.fonts);
         
         // Семейство шрифтов
         const appearanceFontFamilySelect = document.getElementById('appearanceFontFamilySelect');
@@ -2741,7 +2674,6 @@ function loadAppearanceData(config) {
         if (themePreferredSchemeSelect && config.theme.preferredScheme) {
             themePreferredSchemeSelect.value = config.theme.preferredScheme;
         }
-        console.log(t('console.theme_loaded'), config.theme);
     }
 
     // ============================================
@@ -2749,7 +2681,6 @@ function loadAppearanceData(config) {
     // ============================================
 
     if (appearance.widget) {
-        console.log(t('console.loading_widget'), appearance.widget);
 
         // Load widget type
         if (appearance.widget.type) {
@@ -2799,7 +2730,6 @@ function loadAppearanceData(config) {
             }
         }
 
-        console.log(t('console.widget_loaded'));
     }
 
     // ============================================
@@ -2807,7 +2737,6 @@ function loadAppearanceData(config) {
     // ============================================
 
     if (appearance.compactMinimizedPosition) {
-        console.log(t('console.loading_widget_pos'), appearance.compactMinimizedPosition);
 
         // Load position
         const positionSelect = document.getElementById('widgetPosition');
@@ -2828,18 +2757,14 @@ function loadAppearanceData(config) {
             if (marginLeft) marginLeft.value = appearance.compactMinimizedPosition.margins.left || 20;
         }
 
-        console.log(t('console.widget_pos_loaded'));
     }
 
-    console.log(t('console.appearance_loaded'));
 }
 
 // Загрузка настроек поведения
 function loadBehaviorData(config) {
-    console.log(t('console.loading_behavior'));
     const behavior = config.behavior || {};
 
-    console.log(t('console.behavior_settings'), behavior);
     
     // ============================================
     // ПЕРЕКЛЮЧАТЕЛИ
@@ -2853,7 +2778,6 @@ function loadBehaviorData(config) {
         } else {
             autoOpenToggle.classList.remove('active');
         }
-        console.log('✅ autoOpen:', behavior.autoOpen);
     }
     
     // autoFocus
@@ -2864,7 +2788,6 @@ function loadBehaviorData(config) {
         } else if (behavior.autoFocus === false) {
             autoFocusToggle.classList.remove('active');
         }
-        console.log('✅ autoFocus:', behavior.autoFocus);
     }
     
     // showWelcome
@@ -2875,7 +2798,6 @@ function loadBehaviorData(config) {
         } else if (behavior.showWelcome === false) {
             showWelcomeToggle.classList.remove('active');
         }
-        console.log('✅ showWelcome:', behavior.showWelcome);
     }
     
     // showQuickButtons
@@ -2886,7 +2808,6 @@ function loadBehaviorData(config) {
         } else if (behavior.showQuickButtons === false) {
             showQuickButtonsToggle.classList.remove('active');
         }
-        console.log('✅ showQuickButtons:', behavior.showQuickButtons);
     }
     
     // enableVoice
@@ -2897,7 +2818,6 @@ function loadBehaviorData(config) {
         } else if (behavior.enableVoice === false) {
             enableVoiceToggle.classList.remove('active');
         }
-        console.log('✅ enableVoice:', behavior.enableVoice);
     }
     
     // enableFileUpload
@@ -2908,7 +2828,6 @@ function loadBehaviorData(config) {
         } else if (behavior.enableFileUpload === false) {
             enableFileUploadToggle.classList.remove('active');
         }
-        console.log('✅ enableFileUpload:', behavior.enableFileUpload);
     }
     
     // saveHistory
@@ -2919,7 +2838,6 @@ function loadBehaviorData(config) {
         } else if (behavior.saveHistory === false) {
             saveHistoryToggle.classList.remove('active');
         }
-        console.log('✅ saveHistory:', behavior.saveHistory);
     }
     
     // quickButtonsCollapsed
@@ -2930,7 +2848,6 @@ function loadBehaviorData(config) {
         } else if (behavior.quickButtonsCollapsed === false) {
             quickButtonsCollapsedToggle.classList.remove('active');
         }
-        console.log('✅ quickButtonsCollapsed:', behavior.quickButtonsCollapsed);
     }
     
     // enablePasteImages
@@ -2941,7 +2858,6 @@ function loadBehaviorData(config) {
         } else if (behavior.enablePasteImages === false) {
             enablePasteImagesToggle.classList.remove('active');
         }
-        console.log('✅ enablePasteImages:', behavior.enablePasteImages);
     }
     
     // showInputArea
@@ -2952,7 +2868,6 @@ function loadBehaviorData(config) {
         } else if (behavior.showInputArea === false) {
             showInputAreaToggle.classList.remove('active');
         }
-        console.log('✅ showInputArea:', behavior.showInputArea);
     }
     
     // enablePopoutMode
@@ -2963,7 +2878,6 @@ function loadBehaviorData(config) {
         } else if (behavior.enablePopoutMode === false) {
             enablePopoutModeToggle.classList.remove('active');
         }
-        console.log('✅ enablePopoutMode:', behavior.enablePopoutMode);
     }
     
     // ============================================
@@ -2974,7 +2888,6 @@ function loadBehaviorData(config) {
     const autoOpenDelayInput = document.getElementById('autoOpenDelayInput');
     if (autoOpenDelayInput && behavior.autoOpenDelay) {
         autoOpenDelayInput.value = behavior.autoOpenDelay;
-        console.log('✅ autoOpenDelay:', behavior.autoOpenDelay);
     }
     
     // Показываем/скрываем поле задержки
@@ -3018,11 +2931,9 @@ function loadBehaviorData(config) {
     if (behavior.popoutWindowSize) {
         if (popoutWindowWidthInput && behavior.popoutWindowSize.width) {
             popoutWindowWidthInput.value = behavior.popoutWindowSize.width;
-            console.log('✅ popoutWindowSize.width:', behavior.popoutWindowSize.width);
         }
         if (popoutWindowHeightInput && behavior.popoutWindowSize.height) {
             popoutWindowHeightInput.value = behavior.popoutWindowSize.height;
-            console.log('✅ popoutWindowSize.height:', behavior.popoutWindowSize.height);
         }
     }
     
@@ -3062,14 +2973,11 @@ function loadBehaviorData(config) {
         }
 
 
-        console.log(t('console.file_types_loaded'));
     }
-    console.log(t('console.behavior_loaded'));
 }
 
 // Загрузка технических настроек
 function loadTechnicalData(config) {
-    console.log(t('console.loading_technical'));
     const technical = config.technical || {};
 
     // ============================================
@@ -3080,21 +2988,18 @@ function loadTechnicalData(config) {
     const requestTimeoutInput = document.getElementById('requestTimeoutInput');
     if (requestTimeoutInput && technical.requestTimeout) {
         requestTimeoutInput.value = technical.requestTimeout;
-        console.log(t('console.timeout'), technical.requestTimeout);
     }
 
     // Максимальная длина сообщения
     const maxMessageLengthInput = document.getElementById('maxMessageLengthInput');
     if (maxMessageLengthInput && technical.maxMessageLength) {
         maxMessageLengthInput.value = technical.maxMessageLength;
-        console.log(t('console.max_length'), technical.maxMessageLength);
     }
     
     // URL API вебхука
     const aiCoreUrlInput = document.getElementById('aiCoreUrlInput');
     if (aiCoreUrlInput && config.aiCoreUrl) {
         aiCoreUrlInput.value = config.aiCoreUrl;
-        console.log('✅ API URL:', config.aiCoreUrl);
     }
     
     // Режим отладки
@@ -3105,7 +3010,6 @@ function loadTechnicalData(config) {
         } else {
             debugToggle.classList.remove('active');
         }
-        console.log(t('console.debug_mode'), technical.debug);
     }
 
     // ============================================
@@ -3117,32 +3021,27 @@ function loadTechnicalData(config) {
         const voiceUploadEndpoint = document.getElementById('voiceUploadEndpoint');
         if (voiceUploadEndpoint && technical.voiceSettings.uploadEndpoint) {
             voiceUploadEndpoint.value = technical.voiceSettings.uploadEndpoint;
-            console.log('✅ Voice upload:', technical.voiceSettings.uploadEndpoint);
         }
 
         // Download endpoint
         const voiceDownloadEndpoint = document.getElementById('voiceDownloadEndpoint');
         if (voiceDownloadEndpoint && technical.voiceSettings.downloadEndpoint) {
             voiceDownloadEndpoint.value = technical.voiceSettings.downloadEndpoint;
-            console.log('✅ Voice download:', technical.voiceSettings.downloadEndpoint);
         }
 
         // Format
         const voiceFormatSelect = document.getElementById('voiceFormatSelect');
         if (voiceFormatSelect && technical.voiceSettings.fileFormat) {
             voiceFormatSelect.value = technical.voiceSettings.fileFormat;
-            console.log('✅ Voice format:', technical.voiceSettings.fileFormat);
         }
     }
 
-    console.log(t('console.technical_loaded'));
 }
 
 // ===============================================
 // ЗАГРУЗКА ДОПОЛНИТЕЛЬНЫХ НАСТРОЕК
 // ===============================================
 function loadAdditionalConfigData(config) {
-    console.log(t('console.loading_additional'));
     
     // ============================================
     // useIndividualSettings
@@ -3154,7 +3053,6 @@ function loadAdditionalConfigData(config) {
         } else {
             useIndividualToggle.classList.remove('active');
         }
-        console.log('✅ useIndividualSettings:', config.useIndividualSettings);
     }
     
     // ============================================
@@ -3163,7 +3061,6 @@ function loadAdditionalConfigData(config) {
     const orderInput = document.getElementById('switcherOrderInput');
     if (orderInput && config.switcherSettings?.order) {
         orderInput.value = config.switcherSettings.order;
-        console.log('✅ Order:', config.switcherSettings.order);
     }
 
     // ============================================
@@ -3175,14 +3072,12 @@ function loadAdditionalConfigData(config) {
     if (switcherLabelInput && config.switcherSettings?.labels) {
         // Загружаем label для текущего языка
         switcherLabelInput.value = config.switcherSettings.labels[currentLang] || config.switcherSettings.labels['ru'] || '';
-        console.log('✅ Switcher Label:', switcherLabelInput.value);
     }
 
     const switcherDescriptionInput = document.getElementById('switcherDescriptionInput');
     if (switcherDescriptionInput && config.switcherSettings?.descriptions) {
         // Загружаем description для текущего языка
         switcherDescriptionInput.value = config.switcherSettings.descriptions[currentLang] || config.switcherSettings.descriptions['ru'] || '';
-        console.log('✅ Switcher Description:', switcherDescriptionInput.value);
     }
 
     // ============================================
@@ -3191,18 +3086,14 @@ function loadAdditionalConfigData(config) {
     const defaultLangSelect = document.getElementById('configDefaultLanguage');
     if (defaultLangSelect && config.defaultLanguage) {
         defaultLangSelect.value = config.defaultLanguage;
-        console.log('✅ Default language:', config.defaultLanguage);
     }
     
     // ============================================
     // Поддерживаемые языки
     // ============================================
-    console.log(t('console.loading_supported_langs'));
 
     if (config.supportedLanguages && Array.isArray(config.supportedLanguages)) {
         const languageOptions = document.querySelectorAll('#supportedLanguagesSelector .language-option');
-        console.log(t('console.found_lang_buttons'), languageOptions.length);
-        console.log(t('console.supported_langs_config'), config.supportedLanguages);
 
         // Сначала снимаем выделение со всех
         languageOptions.forEach(option => {
@@ -3218,15 +3109,11 @@ function loadAdditionalConfigData(config) {
                 option.classList.add('selected');
                 const checkbox = option.querySelector('input[type="checkbox"]');
                 if (checkbox) checkbox.checked = true;
-                console.log(t('console.lang_enabled').replace('{lang}', lang));
             } else {
-                console.warn(t('console.lang_button_not_found').replace('{lang}', lang));
             }
         });
 
-        console.log(t('console.supported_langs_loaded'), config.supportedLanguages);
     } else {
-        console.warn(t('console.supported_langs_not_found'));
 
         // Снимаем выделение со ВСЕХ языков, если они не указаны в конфиге
         const languageOptions = document.querySelectorAll('#supportedLanguagesSelector .language-option');
@@ -3237,10 +3124,8 @@ function loadAdditionalConfigData(config) {
             if (checkbox) checkbox.checked = false;
         });
 
-        console.log(t('console.all_langs_disabled'));
     }
 
-    console.log(t('console.additional_loaded'));
 }
 
 // ===============================================
@@ -3336,7 +3221,6 @@ function selectQuickColor(color) {
     if (hexInput) hexInput.value = color.toUpperCase();
     if (preview) preview.style.background = color;
 
-    console.log(t('console.color_selected'), color);
 }
 
 // Сохранение выбранного цвета
@@ -3390,7 +3274,6 @@ function applyPaletteColor(color) {
         if (valueSpan) valueSpan.textContent = color.toUpperCase();
 
         setDirty();
-        console.log(t('console.color_applied'), color, t('console.to_element'), colorId);
     } else {
         // Если не было клика - применяем к первому доступному
         if (allPreviews.length > 0) {
@@ -3404,7 +3287,6 @@ function applyPaletteColor(color) {
             if (valueSpan) valueSpan.textContent = color.toUpperCase();
 
             setDirty();
-            console.log(t('console.color_applied_first'), color);
         }
     }
 }
@@ -3782,7 +3664,6 @@ function saveGradient() {
     setDirty();
     closeModal();
     
-    console.log('✅ Градиент сохранен:', gradient);
 }
 
 // Открытие палитры цветов (старая функция для совместимости)
@@ -3855,7 +3736,6 @@ function updateColorPreview(input, previewId) {
         }
         
         function switchTextLanguage(lang) {
-    console.log('Смена языка текстов:', lang);
     
     // Сохраняем текущие данные для предыдущего языка
     if (currentConfig) {
@@ -3882,7 +3762,6 @@ function updateColorPreview(input, previewId) {
         }
         
         function switchTextLanguage(lang) {
-    console.log('Смена языка текстов:', lang);
     
     // Сохраняем текущие данные для предыдущего языка
     if (currentConfig) {
@@ -3929,7 +3808,6 @@ function saveCurrentLanguageData() {
     }
     window.tempConfigData[currentConfig][currentLang] = currentLangData;
 
-    console.log('💾 Сохранены данные языка:', currentLang, currentLangData);
 }
 
         function toggleSwitch(element) {
@@ -3968,7 +3846,6 @@ function saveCurrentLanguageData() {
     // Собираем только измененные поля глобальных настроек
     const fieldsToUpdate = collectGlobalSettingsFields();
 
-    console.log('💾 Сохранение глобальных настроек (только измененные поля):', fieldsToUpdate);
 
     // Отправляем на сервер с типом 'global-partial' для частичного обновления
     fetch('save-webchat-config.php', {
@@ -3986,7 +3863,6 @@ function saveCurrentLanguageData() {
         if (data.success) {
             showSaveIndicator('success', t('save.global_saved'));
             isDirty = false;
-            console.log('✅ Сохранено:', data);
 
             // Обновляем в памяти только измененные поля
             if (window.GlobalConfigSettings) {
@@ -3999,12 +3875,10 @@ function saveCurrentLanguageData() {
             }
         } else {
             showSaveIndicator('error', data.error || t('save.save_error'));
-            console.error('❌ Ошибка:', data);
         }
     })
     .catch(error => {
         showSaveIndicator('error', t('save.server_error'));
-        console.error('❌ Ошибка запроса:', error);
     });
 }
 
@@ -4016,14 +3890,12 @@ function collectGlobalSettingsFields() {
     const switcherToggle = document.querySelector('#global-settings .toggle-wrapper:first-child .toggle-switch');
     if (switcherToggle) {
         fields.showConfigSwitcher = switcherToggle.classList.contains('active');
-        console.log('📝 showConfigSwitcher:', fields.showConfigSwitcher);
     }
 
     // API Key
     const apiKeyInput = document.getElementById('globalApiKey');
     if (apiKeyInput && apiKeyInput.value) {
         fields.apiKey = apiKeyInput.value;
-        console.log('📝 apiKey:', fields.apiKey);
     }
 
     // Другие поля на странице глобальных настроек можно добавить здесь
@@ -4033,7 +3905,6 @@ function collectGlobalSettingsFields() {
     // - глобальная тема
     // и т.д.
 
-    console.log('✅ Собраны измененные поля глобальных настроек:', fields);
     return fields;
 }
 
@@ -4048,12 +3919,10 @@ function collectGlobalSettings() {
     const switcherToggle = document.querySelector('#global-settings .toggle-wrapper:first-child .toggle-switch');
     if (switcherToggle) {
         settings.showConfigSwitcher = switcherToggle.classList.contains('active');
-        console.log('📝 showConfigSwitcher:', settings.showConfigSwitcher);
     }
 
     // Другие настройки можно добавить здесь
 
-    console.log('✅ Собраны глобальные настройки:', settings);
     return settings;
 }
 
@@ -4069,7 +3938,6 @@ function toggleSubsection(header) {
 
 // Обновление поля Pre-Chat формы
 function updatePreChatField(fieldId, property, value) {
-    console.log('🔒 PreChat Field Update:', fieldId, property, '=', value);
 
     // Инициализируем структуру если нужно
     if (!window.GlobalConfigSettings) {
@@ -4119,7 +3987,6 @@ function updatePreChatField(fieldId, property, value) {
 
 // Обновление настройки GDPR
 function updateGDPRSetting(path, value) {
-    console.log('🔒 GDPR Update:', path, '=', value);
 
     // Инициализируем gdpr объект если его нет
     if (!window.GlobalConfigSettings) {
@@ -4165,7 +4032,6 @@ function updateGDPRSetting(path, value) {
     }
 
     showSaveIndicator('changed', notificationMessage);
-    console.log('🔒 GDPR Settings updated:', window.GlobalConfigSettings.gdpr);
 }
 
 // Валидация URL
@@ -4183,7 +4049,6 @@ function isValidUrl(string) {
 // СОХРАНЕНИЕ GDPR НАСТРОЕК
 // ═══════════════════════════════════════════════════════════
 function saveGDPRSettings() {
-    console.log('💾 Сохранение GDPR настроек');
 
     // Получаем существующие GlobalConfigSettings
     const existingGlobalSettings = window.GlobalConfigSettings || {};
@@ -4280,7 +4145,6 @@ function saveGDPRSettings() {
         }
     };
 
-    console.log('📦 GDPR настройки для сохранения:', gdprSettings);
 
     // Обновляем глобальные настройки
     const updatedGlobalSettings = {
@@ -4311,14 +4175,11 @@ function saveGDPRSettings() {
             // Обновляем в памяти
             window.GlobalConfigSettings = updatedGlobalSettings;
 
-            console.log('✅ GDPR настройки успешно сохранены');
         } else {
             showSaveIndicator('error', data.error || t('gdpr.save_error'));
-            console.error('❌ Ошибка сохранения GDPR:', data.error);
         }
     })
     .catch(error => {
-        console.error('❌ Ошибка сети:', error);
         showSaveIndicator('error', t('save.server_error'));
     });
 }
@@ -4397,7 +4258,6 @@ function loadGDPRSettings() {
     setSelectValue('gdprDetectionMode', gdpr.advanced?.geoLocation?.detectionMode || 'manual');
     setCheckboxValue('gdprStrictForEU', gdpr.advanced?.geoLocation?.strictForEU !== false);
 
-    console.log('🔒 GDPR settings loaded into form');
 }
 
 // Вспомогательные функции для загрузки значений
@@ -4422,10 +4282,8 @@ function setInputValue(id, value) {
 
         function saveConfig() {
     try {
-        console.log('💾 Сохранение конфигурации...');
         
         const configData = collectConfigData();
-        console.log('✅ Данные собраны:', configData);
 
         showSaveIndicator('saving', t('save.saving'));
 
@@ -4442,7 +4300,6 @@ function setInputValue(id, value) {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('📡 Ответ сервера:', data);
 
             if (data.success) {
                 showSaveIndicator('success', t('save.config_saved'));
@@ -4451,7 +4308,6 @@ function setInputValue(id, value) {
                 // ✅ НОВОЕ: Очищаем несохраненные изменения после успешного сохранения
                 if (window.pendingChanges && currentConfig) {
                     delete window.pendingChanges[currentConfig];
-                    console.log('🗑️ Очищены pendingChanges для:', currentConfig);
                 }
 
                 // Обновляем в памяти
@@ -4469,7 +4325,6 @@ function setInputValue(id, value) {
                         window.GlobalConfigSettings.availableConfigs[currentConfig] = { enabled: true };
                     }
                     window.GlobalConfigSettings.availableConfigs[currentConfig].order = configData.switcherSettings.order;
-                    console.log(`✅ Обновлен порядок для ${currentConfig}: ${configData.switcherSettings.order}`);
 
                     // Сохраняем обновленные глобальные настройки
                     fetch('save-webchat-config.php', {
@@ -4481,12 +4336,10 @@ function setInputValue(id, value) {
                         })
                     }).then(res => res.json()).then(result => {
                         if (result.success) {
-                            console.log('✅ GlobalConfigSettings обновлены с новым порядком');
                         }
                     });
                 }
 
-                console.log('✅ Сохранение завершено');
 
                 // ✅ Создаем резервную копию после успешного сохранения
                 if (typeof createBackup === 'function') {
@@ -4508,22 +4361,18 @@ function setInputValue(id, value) {
                 }, 500);
             } else {
                 showSaveIndicator('error', data.error || t('save.save_error'));
-                console.error('❌ Ошибка:', data.error);
             }
         })
         .catch(error => {
-            console.error('❌ Ошибка запроса:', error);
             showSaveIndicator('error', t('save.server_error'));
         });
 
     } catch (error) {
-        console.error('❌ Критическая ошибка:', error);
         showSaveIndicator('error', t('save.critical_error'));
     }
 }
 
 function saveBaseSettings() {
-    console.log('💾 Сохранение базовых настроек');
 
     const baseSettings = collectBaseSettings();
 
@@ -4554,7 +4403,6 @@ function saveBaseSettings() {
         }
     })
     .catch(error => {
-        console.error('❌ Ошибка:', error);
         showSaveIndicator('error', t('save.server_error'));
     });
 }
@@ -4573,7 +4421,6 @@ function collectConfigData() {
         internalConfigName: currentConfig,
         // ✅ НОВОЕ: Логирование для отладки
     _debug: (() => {
-        console.log('🔍 Начало сбора данных конфигурации:', currentConfig);
         return true;
     })(),
         useIndividualSettings: document.getElementById('useIndividualSettingsToggle')?.classList.contains('active') || false,
@@ -4676,7 +4523,6 @@ function collectConfigData() {
         }
     });
 
-    console.log('✅ switcherSettings обновлены:', data.switcherSettings);
 
     // Заголовок контактов
     const contactsTitle = document.getElementById('contactsTitle')?.value;
@@ -4841,7 +4687,6 @@ function collectConfigData() {
     data.technical.allowedFileTypes = types;
     
      // ✅ ЛОГИРОВАНИЕ: Проверка собранных данных
-    console.log('📦 Собрано данных конфигурации:', {
         configId: data.configId,
         hasTexts: !!data.texts,
         textLanguages: data.texts ? Object.keys(data.texts) : [],
@@ -4942,7 +4787,6 @@ function updateConfiguration(configId, data) {
 function showSaveIndicator(type, message) {
     const indicator = document.getElementById('saveIndicator');
     if (!indicator) {
-        console.warn('⚠️ Элемент saveIndicator не найден');
         return;
     }
 
@@ -4997,13 +4841,11 @@ function showSaveIndicator(type, message) {
     }
     
     setDirty();
-    console.log('✅ Добавлена новая быстрая кнопка');
 }
 
        function addContact() {
     const container = document.querySelector('.contacts-editor');
     if (!container) {
-        console.error('Контейнер контактов не найден');
         return;
     }
     
@@ -5021,7 +4863,6 @@ function showSaveIndicator(type, message) {
     
     container.appendChild(newContact);
     setDirty();
-    console.log('✅ Добавлен новый контакт');
 }
 
         function backToList() {
@@ -5029,7 +4870,6 @@ function showSaveIndicator(type, message) {
         }
 
         function createNewConfig() {
-    console.log('➕ Открытие формы создания конфигурации');
     
     // Удаляем старое модальное окно если есть
     const oldModal = document.getElementById('createConfigModal');
@@ -5088,7 +4928,6 @@ function showSaveIndicator(type, message) {
         const cancelBtn = modal?.querySelector('.modal-cancel-btn');
         const saveBtn = modal?.querySelector('.modal-save-btn');
         
-        console.log('Элементы модального окна:', {
             modal: !!modal,
             closeBtn: !!closeBtn,
             cancelBtn: !!cancelBtn,
@@ -5097,7 +4936,6 @@ function showSaveIndicator(type, message) {
         
         // Функция закрытия
 const closeModalWindow = function() {
-    console.log('Закрытие модального окна');
     const modalToRemove = document.getElementById('createConfigModal');
     if (modalToRemove) {
         modalToRemove.remove();
@@ -5109,7 +4947,6 @@ const closeModalWindow = function() {
             closeBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Клик по крестику');
                 closeModalWindow();
             });
         }
@@ -5119,7 +4956,6 @@ const closeModalWindow = function() {
             cancelBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Клик по кнопке Отмена');
                 closeModalWindow();
             });
         }
@@ -5128,7 +4964,6 @@ const closeModalWindow = function() {
         if (modal) {
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
-                    console.log('Клик по фону');
                     closeModalWindow();
                 }
             });
@@ -5139,7 +4974,6 @@ const closeModalWindow = function() {
             saveBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Клик по кнопке Сохранить');
                 saveNewConfig();
             });
         }
@@ -5147,7 +4981,6 @@ const closeModalWindow = function() {
         // Закрытие по ESC
         const escHandler = function(e) {
             if (e.key === 'Escape') {
-                console.log('Нажата клавиша ESC');
                 closeModalWindow();
                 document.removeEventListener('keydown', escHandler);
             }
@@ -5160,35 +4993,27 @@ const closeModalWindow = function() {
             firstInput.focus();
         }
         
-        console.log('✅ Обработчики событий установлены');
     }, 50);
     
-    console.log('✅ Модальное окно добавлено в DOM');
 }
 
 // Функция закрытия модального окна
 function closeModal() {
-    console.log('✕ Закрытие модального окна');
     
     const modal = document.getElementById('createConfigModal');
     if (modal) {
-        console.log('✅ Модальное окно найдено, удаляем...');
         modal.remove();
-        console.log('✅ Модальное окно удалено');
     } else {
-        console.warn('⚠️ Модальное окно createConfigModal не найдено');
         
         // Пробуем удалить все модальные окна
         document.querySelectorAll('.modal-overlay').forEach(m => {
             m.remove();
-            console.log('✅ Удалено модальное окно:', m.id);
         });
     }
 }
 
 // Функция сохранения новой конфигурации
 function saveNewConfig() {
-    console.log('💾 Начало сохранения новой конфигурации');
     
     const configId = document.getElementById('newConfigId')?.value.trim() || '';
     const configName = document.getElementById('newConfigName')?.value.trim() || '';
@@ -5196,7 +5021,6 @@ function saveNewConfig() {
     const configDescription = document.getElementById('newConfigDescription')?.value.trim() || '';
     const configOrder = parseInt(document.getElementById('newConfigOrder')?.value) || 999;
     
-    console.log('📝 Введенные данные:', {configId, configName, configIcon, configDescription, configOrder});
     
     // Валидация
     if (!configId) {
@@ -5224,17 +5048,13 @@ function saveNewConfig() {
         return;
     }
     
-    console.log('✅ Валидация пройдена');
     
     try {
         // Создаем конфигурацию
-        console.log('🔨 Создание конфигурации...');
         const newConfig = createConfigurationObject(configId, configName, configIcon, configDescription, configOrder);
 
-        console.log('✅ Конфигурация создана в памяти');
 
         // ✅ НОВОЕ: Отправляем на сервер
-        console.log('📤 Отправка конфигурации на сервер...');
         showSaveIndicator('saving', t('save.saving_config'));
 
         fetch('save-webchat-config.php', {
@@ -5250,16 +5070,13 @@ function saveNewConfig() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('📡 Ответ сервера:', data);
 
             if (data.success) {
-                console.log('✅ Конфигурация сохранена на сервере');
 
                 // Закрываем модальное окно
                 const modal = document.getElementById('createConfigModal');
                 if (modal) {
                     modal.remove();
-                    console.log('✅ Модальное окно удалено');
                 } else {
                     document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
                 }
@@ -5271,13 +5088,10 @@ function saveNewConfig() {
                 setTimeout(() => {
                     loadConfigurationsList();
                     updateSidebarConfigs();
-                    console.log('✅ Список конфигураций обновлён');
                 }, 300);
 
-                console.log('🎉 Процесс создания завершён успешно');
             } else {
                 showSaveIndicator('error', data.error || t('save.server_save_error'));
-                console.error('❌ Ошибка от сервера:', data.error);
 
                 // Откатываем создание в памяти
                 delete window[fullConfigId];
@@ -5290,7 +5104,6 @@ function saveNewConfig() {
             }
         })
         .catch(error => {
-            console.error('❌ Ошибка запроса:', error);
             showSaveIndicator('error', t('save.server_error'));
 
             // Откатываем создание в памяти
@@ -5304,8 +5117,6 @@ function saveNewConfig() {
         });
 
     } catch (error) {
-        console.error('❌ ОШИБКА при создании конфигурации:', error);
-        console.error('Stack trace:', error.stack);
         alert(t('alert.creation_error').replace('{error}', error.message));
     }
 }
@@ -5347,7 +5158,6 @@ function closeModal() {
 
 // Создание объекта конфигурации
 function createConfigurationObject(configId, name, icon, description, order) {
-    console.log('🆕 Создание новой конфигурации:', configId);
     
     const fullConfigId = configId.endsWith('Config') ? configId : configId + 'Config';
     
@@ -5550,7 +5360,6 @@ function createConfigurationObject(configId, name, icon, description, order) {
         };
     }
     
-     console.log('✅ Конфигурация создана:', fullConfigId);
     setDirty();
     
     // ✅ НОВОЕ: Обновляем боковое меню
@@ -5559,7 +5368,6 @@ function createConfigurationObject(configId, name, icon, description, order) {
     return newConfig;
 }
        function toggleConfigStatus(configId) {
-    console.log('🔄 Переключение статуса конфигурации:', configId);
     
     // Получаем текущий статус
     const currentStatus = window.GlobalConfigSettings.availableConfigs[configId]?.enabled;
@@ -5582,10 +5390,8 @@ function createConfigurationObject(configId, name, icon, description, order) {
         if (statusDot) {
             if (newStatus) {
                 statusDot.classList.remove('disabled');
-                console.log('✅ Конфигурация включена:', configId);
             } else {
                 statusDot.classList.add('disabled');
-                console.log('❌ Конфигурация выключена:', configId);
             }
         }
         
@@ -5593,7 +5399,6 @@ function createConfigurationObject(configId, name, icon, description, order) {
         const toggleButton = card.querySelector('.btn-secondary');
         if (toggleButton) {
             toggleButton.innerHTML = `🔄 ${newStatus ? 'Выкл' : 'Вкл'}`;
-            console.log('✅ Текст кнопки обновлен:', newStatus ? 'Выкл' : 'Вкл');
         }
     }
     
@@ -5601,7 +5406,6 @@ function createConfigurationObject(configId, name, icon, description, order) {
     updateSidebarConfigs();
 
     // ✅ Отправляем изменения на сервер
-    console.log('📤 Отправка статуса на сервер...');
     showSaveIndicator('saving', t('save.saving_status'));
 
     fetch('save-webchat-config.php', {
@@ -5618,15 +5422,12 @@ function createConfigurationObject(configId, name, icon, description, order) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('📡 Ответ сервера:', data);
 
         if (data.success) {
-            console.log('✅ Статус сохранен на сервере');
             showSaveIndicator('success', newStatus ? t('save.config_enabled') : t('save.config_disabled'));
             isDirty = false;
         } else {
             showSaveIndicator('error', data.error || t('save.status_error'));
-            console.error('❌ Ошибка от сервера:', data.error);
 
             // Откатываем изменения в памяти при ошибке
             window.GlobalConfigSettings.availableConfigs[configId].enabled = currentStatus;
@@ -5650,7 +5451,6 @@ function createConfigurationObject(configId, name, icon, description, order) {
         }
     })
     .catch(error => {
-        console.error('❌ Ошибка запроса:', error);
         showSaveIndicator('error', t('save.server_error'));
 
         // Откатываем изменения в памяти при ошибке
@@ -5683,7 +5483,6 @@ function deleteConfig(configId) {
         return;
     }
 
-    console.log('🗑️ Удаление конфигурации:', configId);
 
     // Сохраняем копию для возможного отката
     const backup = {
@@ -5707,7 +5506,6 @@ function deleteConfig(configId) {
     }
 
     // ✅ НОВОЕ: Отправляем запрос на сервер
-    console.log('📤 Отправка запроса на удаление...');
     showSaveIndicator('saving', t('save.deleting_config'));
 
     fetch('save-webchat-config.php', {
@@ -5722,10 +5520,8 @@ function deleteConfig(configId) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('📡 Ответ сервера:', data);
 
         if (data.success) {
-            console.log('✅ Конфигурация удалена с сервера');
             showSaveIndicator('success', t('save.config_deleted'));
 
             // Обновляем боковое меню
@@ -5737,7 +5533,6 @@ function deleteConfig(configId) {
             }, 500);
         } else {
             showSaveIndicator('error', data.error || t('save.delete_error'));
-            console.error('❌ Ошибка от сервера:', data.error);
 
             // Откатываем удаление в памяти
             if (backup.config) window[configId] = backup.config;
@@ -5750,7 +5545,6 @@ function deleteConfig(configId) {
         }
     })
     .catch(error => {
-        console.error('❌ Ошибка запроса:', error);
         showSaveIndicator('error', t('save.server_error'));
 
         // Откатываем удаление в памяти
@@ -5765,7 +5559,6 @@ function deleteConfig(configId) {
 }
 
         function exportConfig() {
-    console.log('📤 Экспорт полной конфигурации с сервера...');
 
     showSaveIndicator('saving', t('save.preparing_export'));
 
@@ -5782,7 +5575,6 @@ function deleteConfig(configId) {
 
 // ✅ Экспорт полного файла webchat-config.js с текущими настройками из формы
 function exportCurrentConfig() {
-    console.log('📤 Экспорт полного файла с текущими настройками...');
     showSaveIndicator('saving', t('save.preparing_export_current'));
 
     try {
@@ -5826,7 +5618,6 @@ function exportCurrentConfig() {
             }
         }
 
-        console.log('📦 Отправка данных на сервер для генерации полного файла...', Object.keys(exportData));
 
         // Отправляем на PHP обработчик для получения полного файла
         fetch('export-full-config.php', {
@@ -5859,21 +5650,17 @@ function exportCurrentConfig() {
             window.URL.revokeObjectURL(url);
 
             showSaveIndicator('success', t('save.config_exported'));
-            console.log('✅ Экспорт полного файла завершен');
         })
         .catch(error => {
-            console.error('❌ Ошибка экспорта:', error);
             showSaveIndicator('error', t('save.export_error').replace('{error}', error.message));
         });
 
     } catch (error) {
-        console.error('❌ Ошибка экспорта:', error);
         showSaveIndicator('error', t('save.export_settings_error'));
     }
 }
 
         function importConfig() {
-            console.log('📥 Импорт конфигурации');
 
             // Создаем input для выбора файла
             const input = document.createElement('input');
@@ -5902,7 +5689,6 @@ function exportCurrentConfig() {
                 .then(data => {
                     if (data.success) {
                         showSaveIndicator('success', t('save.config_imported'));
-                        console.log('✅ Конфигурация импортирована:', data);
 
                         // Перезагружаем страницу через 1 секунду
                         setTimeout(() => {
@@ -5910,11 +5696,9 @@ function exportCurrentConfig() {
                         }, 1000);
                     } else {
                         showSaveIndicator('error', data.error || 'Ошибка импорта');
-                        console.error('❌ Ошибка:', data.error);
                     }
                 })
                 .catch(error => {
-                    console.error('❌ Ошибка импорта:', error);
                     showSaveIndicator('error', t('save.server_error'));
                 });
             };
@@ -5923,7 +5707,6 @@ function exportCurrentConfig() {
         }
 
         function copyConfigToClipboard() {
-            console.log('Копирование в буфер обмена');
 
             // Собираем все конфигурации
             const configs = { GlobalConfigSettings: window.GlobalConfigSettings };
@@ -5946,7 +5729,6 @@ function exportCurrentConfig() {
             navigator.clipboard.writeText(jsContent).then(() => {
                 showSaveIndicator('success', t('export.copied'));
             }).catch(err => {
-                console.error('Ошибка копирования:', err);
                 showSaveIndicator('error', t('export.copy_error'));
             });
         }
@@ -5957,7 +5739,6 @@ function exportCurrentConfig() {
 
         // Создание резервной копии на сервере
         function createBackup() {
-            console.log('💾 Создание резервной копии на сервере...');
             showSaveIndicator('saving', t('save.creating_backup'));
 
             fetch('create-webchat-backup.php', {
@@ -5970,35 +5751,29 @@ function exportCurrentConfig() {
             .then(data => {
                 if (data.success) {
                     showSaveIndicator('success', t('save.backup_created'));
-                    console.log('✅ Резервная копия создана:', data.backup);
 
                     // ✅ ИСПРАВЛЕНО: Обновляем список сразу без задержки
                     loadBackupsList();
                 } else {
                     showSaveIndicator('error', data.error || t('save.backup_create_error'));
-                    console.error('❌ Ошибка:', data.error);
                 }
             })
             .catch(error => {
-                console.error('❌ Ошибка создания резервной копии:', error);
                 showSaveIndicator('error', t('save.server_error'));
             });
         }
 
         // Загрузка списка резервных копий с сервера
         function loadBackupsList() {
-            console.log('📋 Загрузка списка резервных копий...');
 
             // Добавляем timestamp для предотвращения кэширования
             const timestamp = new Date().getTime();
             fetch('list-webchat-backups.php?_=' + timestamp)
             .then(response => response.json())
             .then(backups => {
-                console.log('✅ Найдено резервных копий:', backups.length);
 
                 const container = document.getElementById('backupsList');
                 if (!container) {
-                    console.warn('⚠️ Контейнер backupsList не найден');
                     return;
                 }
 
@@ -6025,7 +5800,6 @@ function exportCurrentConfig() {
                 }).join('');
             })
             .catch(error => {
-                console.error('❌ Ошибка загрузки списка резервных копий:', error);
                 const container = document.getElementById('backupsList');
                 if (container) {
                     container.innerHTML = `<p class="text-muted" style="padding: 20px; text-align: center; color: var(--danger);">${t('backup.load_error')}</p>`;
@@ -6039,7 +5813,6 @@ function exportCurrentConfig() {
                 return;
             }
 
-            console.log('🔄 Восстановление из резервной копии:', backupName);
             showSaveIndicator('saving', t('save.restoring'));
 
             fetch('restore-webchat-backup.php', {
@@ -6053,7 +5826,6 @@ function exportCurrentConfig() {
             .then(data => {
                 if (data.success) {
                     showSaveIndicator('success', t('save.config_restored_reloading'));
-                    console.log('✅ Конфигурация восстановлена');
 
                     // Перезагружаем страницу через 1.5 секунды
                     setTimeout(() => {
@@ -6061,18 +5833,15 @@ function exportCurrentConfig() {
                     }, 1500);
                 } else {
                     showSaveIndicator('error', data.error || t('save.restore_error'));
-                    console.error('❌ Ошибка:', data.error);
                 }
             })
             .catch(error => {
-                console.error('❌ Ошибка восстановления:', error);
                 showSaveIndicator('error', t('save.server_error'));
             });
         }
 
         // Скачивание резервной копии
         function downloadBackup(backupName) {
-            console.log('📥 Скачивание резервной копии:', backupName);
 
             // Создаем ссылку для скачивания
             const downloadUrl = 'download-webchat-backup.php?backup=' + encodeURIComponent(backupName);
@@ -6094,7 +5863,6 @@ function exportCurrentConfig() {
                 return;
             }
 
-            console.log('🗑️ Удаление резервной копии:', backupName);
             showSaveIndicator('saving', t('save.deleting'));
 
             fetch('delete-webchat-backup.php', {
@@ -6108,17 +5876,14 @@ function exportCurrentConfig() {
             .then(data => {
                 if (data.success) {
                     showSaveIndicator('success', t('save.backup_deleted'));
-                    console.log('✅ Резервная копия удалена');
 
                     // ✅ ИСПРАВЛЕНО: Обновляем список сразу без задержки
                     loadBackupsList();
                 } else {
                     showSaveIndicator('error', data.error || t('save.backup_delete_error'));
-                    console.error('❌ Ошибка:', data.error);
                 }
             })
             .catch(error => {
-                console.error('❌ Ошибка удаления:', error);
                 showSaveIndicator('error', t('save.server_error'));
             });
         }
@@ -6129,16 +5894,13 @@ function exportCurrentConfig() {
         }
 
         function togglePreviewTheme() {
-            console.log('Смена темы предпросмотра');
         }
 
         function showPreview() {
-            console.log('Показ предпросмотра');
         }
 
         // ✅ ОБНОВЛЕНО: Функция обновления предпросмотра чата в реальном времени
         function updatePreview() {
-            console.log('🔄 Обновление предпросмотра в реальном времени...');
 
             // Получаем данные напрямую из полей формы (не из сохраненной конфигурации)
             const avatar = document.getElementById('widgetIcon')?.value || '💬';
@@ -6203,7 +5965,6 @@ function exportCurrentConfig() {
                 btn.style.background = buttonColor;
             });
 
-            console.log('✅ Предпросмотр обновлен в реальном времени');
         }
 
         function formatText(command) {
@@ -6417,7 +6178,6 @@ function exportCurrentConfig() {
             body.innerHTML = '';
 
             if (!emojiData[category]) {
-                console.error('Category not found:', category);
                 return;
             }
 
@@ -6570,7 +6330,6 @@ function exportCurrentConfig() {
         });
 
         function switchTextLanguage(lang) {
-    console.log('🌍 Смена языка текстов на:', lang);
 
     // Перезагружаем данные конфигурации для нового языка
     if (currentConfig) {
@@ -6590,7 +6349,6 @@ function exportCurrentConfig() {
             menu.classList.toggle('expanded');
             arrow.classList.toggle('collapsed');
 
-            console.log('🔄 Меню конфигураций ' + (menu.classList.contains('expanded') ? 'развернуто' : 'свернуто'));
         }
 
         // Switch font platform for individual configs
@@ -6611,7 +6369,6 @@ function exportCurrentConfig() {
 // ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
 // ===============================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Инициализация страницы...');
 
     // Проверка несохранённых изменений при уходе
     window.addEventListener('beforeunload', function(e) {
@@ -6648,7 +6405,6 @@ document.addEventListener('DOMContentLoaded', function() {
         loadBackupsList();
     }, 500);
 
-    console.log('✅ Инициализация завершена');
 });
 
 // ===============================================
@@ -6659,11 +6415,9 @@ function initLanguageButtons() {
     const languageSelector = document.getElementById('supportedLanguagesSelector');
     
     if (!languageSelector) {
-        console.error('❌ Контейнер языков #supportedLanguagesSelector не найден!');
         return;
     }
     
-    console.log('✅ Контейнер языков найден');
     
     // Используем делегирование событий - слушаем клики на контейнере
     languageSelector.addEventListener('click', function(e) {
@@ -6691,19 +6445,16 @@ function initLanguageButtons() {
         
         const lang = languageOption.dataset.lang;
         const isSelected = languageOption.classList.contains('selected');
-        console.log('🌍 Язык переключен:', lang, isSelected ? '✅ включен' : '❌ выключен');
     });
     
     // Считаем кнопки
     const languageOptions = languageSelector.querySelectorAll('.language-option');
-    console.log('🌍 Найдено языковых кнопок:', languageOptions.length);
 }
 
 // ===============================================
 // ИНИЦИАЛИЗАЦИЯ DRAG & DROP
 // ===============================================
 function initializeDragAndDrop() {
-    console.log('🔄 Инициализация drag & drop');
     // Здесь должна быть инициализация drag & drop функциональности
 }
 
@@ -6711,11 +6462,9 @@ function initializeDragAndDrop() {
 // ЗАГРУЗКА СПИСКА КОНФИГУРАЦИЙ
 // ===============================================
 function loadConfigurationsList() {
-    console.log('📋 Загрузка списка конфигураций');
     
     const configsContainer = document.querySelector('.config-cards');
     if (!configsContainer) {
-        console.warn('⚠️ Контейнер конфигураций не найден');
         return;
     }
     
@@ -6724,11 +6473,9 @@ function loadConfigurationsList() {
     
     // Проверяем наличие ChatConfigs
     if (!window.ChatConfigs) {
-        console.error('❌ ChatConfigs не найден');
         return;
     }
     
-    console.log('Найдены конфигурации в ChatConfigs:', Object.keys(window.ChatConfigs));
     
     // Получаем все конфигурации
     const configNames = Object.keys(window.ChatConfigs).filter(key => 
@@ -6742,7 +6489,6 @@ function loadConfigurationsList() {
         key !== 'globalSettings'
     );
     
-    console.log('Конфигурации для отображения:', configNames);
     
     // Создаем массив для сортировки
     const configsArray = [];
@@ -6752,7 +6498,6 @@ function loadConfigurationsList() {
         const configName = shortName + 'Config'; // finance -> financeConfig
         
         if (!config || !config.botInfo) {
-            console.warn('⚠️ Конфигурация некорректна:', shortName);
             return;
         }
         
@@ -6816,31 +6561,26 @@ function loadConfigurationsList() {
     
     configsContainer.insertAdjacentHTML('beforeend', addCardHtml);
     
-    console.log('✅ Список конфигураций загружен');
 }
 
 // ===============================================
 // ОБНОВЛЕНИЕ БОКОВОГО МЕНЮ КОНФИГУРАЦИЙ
 // ===============================================
 function updateSidebarConfigs() {
-    console.log('🔄 Обновление бокового меню конфигураций');
     
     // Находим контейнер подменю конфигураций
     const configSubmenu = document.getElementById('dynamicConfigMenu');
     
     if (!configSubmenu) {
-        console.error('❌ Контейнер #dynamicConfigMenu не найден');
         return;
     }
     
-    console.log('✅ Контейнер найден:', configSubmenu);
     
     // Очищаем меню
     configSubmenu.innerHTML = '';
     
     // Получаем конфигурации
     if (!window.ChatConfigs) {
-        console.warn('⚠️ ChatConfigs не найден');
         return;
     }
     
@@ -6848,7 +6588,6 @@ function updateSidebarConfigs() {
     const serviceKeys = ['apply', 'manager', 'getAvailable', 'getSortedForUI', 'shouldShowSwitcher', 'getDefault', 'theme', 'globalSettings'];
     const configNames = Object.keys(window.ChatConfigs).filter(key => !serviceKeys.includes(key));
     
-    console.log('📋 Конфигураций в ChatConfigs:', configNames.length, configNames);
     
     // Создаём массив для сортировки
     const configsArray = [];
@@ -6859,7 +6598,6 @@ function updateSidebarConfigs() {
         
         // Проверяем наличие данных
         if (!config || !config.botInfo) {
-            console.warn(`⚠️ Конфигурация ${configName} не имеет botInfo`);
             return;
         }
         
@@ -6868,7 +6606,6 @@ function updateSidebarConfigs() {
         const isEnabled = globalSetting?.enabled !== false;
         
         if (!isEnabled) {
-            console.log(`⏭️ Конфигурация ${configName} выключена`);
             return;
         }
         
@@ -6885,7 +6622,6 @@ function updateSidebarConfigs() {
     // Сортируем по order
     configsArray.sort((a, b) => a.order - b.order);
     
-    console.log('✅ Включенных конфигураций:', configsArray.length);
     
     // Добавляем конфигурации в подменю
     let addedCount = 0;
@@ -6913,25 +6649,20 @@ function updateSidebarConfigs() {
         configSubmenu.appendChild(navItem);
         
         addedCount++;
-        console.log(`✅ Добавлен: ${icon} ${name} (${configName})`);
     });
     
-    console.log(`✅ Всего добавлено пунктов: ${addedCount}`);
 }
 
 // Обновление бокового меню конфигураций
 function updateSidebarConfigs() {
-    console.log('🔄 Обновление бокового меню конфигураций');
     
     // Находим контейнер подменю конфигураций
     const configSubmenu = document.querySelector('.config-submenu');
     
     if (!configSubmenu) {
-        console.error('❌ Контейнер .config-submenu не найден');
         return;
     }
     
-    console.log('✅ Контейнер найден:', configSubmenu);
     
     // Удаляем все динамически добавленные пункты (без data-static)
     const dynamicItems = configSubmenu.querySelectorAll('.nav-item:not([data-static])');
@@ -6939,11 +6670,9 @@ function updateSidebarConfigs() {
         item.remove();
     });
     
-    console.log('🗑️ Удалено динамических пунктов:', dynamicItems.length);
     
     // Получаем конфигурации
     if (!window.ChatConfigs) {
-        console.warn('⚠️ ChatConfigs не найден');
         return;
     }
     
@@ -6951,7 +6680,6 @@ function updateSidebarConfigs() {
     const serviceKeys = ['apply', 'manager', 'getAvailable', 'getSortedForUI', 'shouldShowSwitcher', 'getDefault', 'theme', 'globalSettings'];
     const configNames = Object.keys(window.ChatConfigs).filter(key => !serviceKeys.includes(key));
     
-    console.log('📋 Конфигураций в ChatConfigs:', configNames.length, configNames);
     
     // Создаём массив для сортировки
     const configsArray = [];
@@ -6962,7 +6690,6 @@ function updateSidebarConfigs() {
         
         // Проверяем наличие данных
         if (!config || !config.botInfo) {
-            console.warn(`⚠️ Конфигурация ${configName} не имеет botInfo`);
             return;
         }
         
@@ -6971,7 +6698,6 @@ function updateSidebarConfigs() {
         const isEnabled = globalSetting?.enabled !== false;
         
         if (!isEnabled) {
-            console.log(`⏭️ Конфигурация ${configName} выключена`);
             return;
         }
         
@@ -6988,7 +6714,6 @@ function updateSidebarConfigs() {
     // Сортируем по order
     configsArray.sort((a, b) => a.order - b.order);
     
-    console.log('✅ Включенных конфигураций:', configsArray.length);
     
     // Добавляем конфигурации в подменю
     let addedCount = 0;
@@ -7016,22 +6741,18 @@ function updateSidebarConfigs() {
         configSubmenu.appendChild(navItem);
         
         addedCount++;
-        console.log(`✅ Добавлен: ${icon} ${name} (${configName})`);
     });
     
-    console.log(`✅ Всего добавлено пунктов: ${addedCount}`);
 }
 
 // ===============================================
 // ОБНОВЛЕНИЕ СЕЛЕКТА "КОНФИГУРАЦИЯ ПО УМОЛЧАНИЮ"
 // ===============================================
 function updateDefaultConfigSelector() {
-    console.log('🔄 Обновление селекта конфигурации по умолчанию');
 
     const selector = document.getElementById('defaultConfigSelector');
 
     if (!selector) {
-        console.error('❌ Селект #defaultConfigSelector не найден');
         return;
     }
 
@@ -7043,7 +6764,6 @@ function updateDefaultConfigSelector() {
 
     // Получаем конфигурации
     if (!window.ChatConfigs) {
-        console.warn('⚠️ ChatConfigs не найден');
         return;
     }
 
@@ -7094,17 +6814,14 @@ function updateDefaultConfigSelector() {
         selector.value = selector.options[0].value;
     }
 
-    console.log('✅ Селект обновлен, доступно опций:', selector.options.length);
 }
 
 // ===============================================
 // АВТОМАТИЧЕСКАЯ РЕГИСТРАЦИЯ НОВЫХ КОНФИГУРАЦИЙ
 // ===============================================
 function autoRegisterConfigs() {
-    console.log('🔍 Автоматическая регистрация новых конфигураций...');
 
     if (!window.ChatConfigs || !window.GlobalConfigSettings) {
-        console.warn('⚠️ ChatConfigs или GlobalConfigSettings не найдены');
         return;
     }
 
@@ -7141,50 +6858,38 @@ function autoRegisterConfigs() {
                 order: config.switcherSettings?.order || maxOrder
             };
             registered++;
-            console.log(`✅ Автоматически зарегистрирована: ${configName} (order: ${window.GlobalConfigSettings.availableConfigs[configName].order})`);
         }
     });
 
     if (registered > 0) {
-        console.log(`✅ Зарегистрировано новых конфигураций: ${registered}`);
     } else {
-        console.log('✅ Все конфигурации уже зарегистрированы');
     }
 }
 
        // Загрузка файла конфигурации при старте
 function loadConfigurationFile() {
-    console.log('🔄 Загрузка конфигурации...');
 
     const script = document.createElement('script');
     // ✅ ИСПРАВЛЕНИЕ: Добавляем timestamp для предотвращения кэширования
     script.src = 'webchat-config.js?t=' + Date.now();
 
     script.onload = function() {
-        console.log('✅ Файл webchat-config.js загружен');
         
         // ✅ ВАЖНО: Даём время на выполнение всего скрипта
         setTimeout(function() {
             
             // Проверяем что данные загрузились
-            console.log('Проверка window.ChatConfigs:', window.ChatConfigs);
-            console.log('Проверка window.GlobalConfigSettings:', window.GlobalConfigSettings);
             
             if (typeof window.GlobalConfigSettings === 'undefined') {
-                console.error('❌ GlobalConfigSettings не найден');
                 showSaveIndicator('error', t('save.loading_config_error'));
                 return;
             }
             
             if (typeof window.ChatConfigs === 'undefined') {
-                console.error('❌ ChatConfigs не найден');
-                console.log('Доступные в window:', Object.keys(window).filter(k => k.includes('Config') || k.includes('Chat')));
                 showSaveIndicator('error', t('save.chatconfigs_not_loaded'));
                 return;
             }
             
-            console.log('✅ Найдены настройки:', window.GlobalConfigSettings);
-            console.log('✅ Найден ChatConfigs:', Object.keys(window.ChatConfigs));
 
             // ✅ НОВОЕ: Автоматически регистрируем новые конфигурации
             autoRegisterConfigs();
@@ -7209,7 +6914,6 @@ function loadConfigurationFile() {
             if (lastEditedConfig && window.ChatConfigs) {
                 const shortName = lastEditedConfig.replace('Config', '');
                 if (window.ChatConfigs[shortName] || window[lastEditedConfig]) {
-                    console.log('📝 Восстановление последней конфигурации:', lastEditedConfig);
                     currentConfig = lastEditedConfig;
                     editConfig(lastEditedConfig);
                 }
@@ -7217,7 +6921,6 @@ function loadConfigurationFile() {
 
             // Если уже выбрана конфигурация - загружаем её
             if (currentConfig && !lastEditedConfig) {
-                console.log('📝 Загрузка конфигурации:', currentConfig);
                 loadConfigData(currentConfig);
             }
             
@@ -7225,7 +6928,6 @@ function loadConfigurationFile() {
     };
     
     script.onerror = function() {
-        console.error('❌ Ошибка загрузки webchat-config.js');
         showSaveIndicator('error', t('save.load_file_error'));
     };
     
@@ -7238,16 +6940,11 @@ function loadConfigurationFile() {
 
 // Функция отладки для проверки загруженных данных
 function debugConfiguration() {
-    console.log('=== ОТЛАДКА КОНФИГУРАЦИИ ===');
-    console.log('window.GlobalConfigSettings:', window.GlobalConfigSettings);
-    console.log('window.ChatConfigs:', window.ChatConfigs);
     
     if (window.ChatConfigs) {
-        console.log('Доступные конфигурации:', Object.keys(window.ChatConfigs));
         
         Object.keys(window.ChatConfigs).forEach(key => {
             if (typeof window.ChatConfigs[key] === 'object' && window.ChatConfigs[key]?.configId) {
-                console.log(`  - ${key}:`, {
                     configId: window.ChatConfigs[key].configId,
                     botInfo: window.ChatConfigs[key].botInfo,
                     hasTexts: !!window.ChatConfigs[key].texts,
@@ -7257,12 +6954,10 @@ function debugConfiguration() {
             }
         });
     }
-    console.log('=== КОНЕЦ ОТЛАДКИ ===');
 }
 
 // Добавляем функцию отладки в глобальную область
 window.debugConfig = debugConfiguration;
-console.log('💡 Для отладки введите в консоли: debugConfig()');
 
 // ===============================================
 // ВЫЗОВ ЗАГРУЗКИ ПРИ СТАРТЕ
@@ -7277,11 +6972,9 @@ console.log('💡 Для отладки введите в консоли: debugC
 // Новая версия собирает конфигурации из памяти и создает файл на клиенте
 function loadGlobalSettings() {
     if (!window.GlobalConfigSettings) {
-        console.warn('⚠️ GlobalConfigSettings не загружены');
         return;
     }
     
-    console.log('📋 Загрузка глобальных настроек');
     const settings = window.GlobalConfigSettings;
     
     // ============================================
@@ -7417,7 +7110,6 @@ function loadGlobalSettings() {
         streamingChunkTypeSelect.value = settings.streamingAnimation.chunkType || 'word';
     }
 
-    console.log('✅ Глобальные настройки загружены');
 }
 // Загрузка списка бэкапов
 // Старые функции loadBackupsList() и restoreFromBackup() удалены
@@ -7431,7 +7123,6 @@ function loadGlobalSettings() {
 
 // Переключение вкладок базовых настроек
 function switchBaseTab(tab) {
-    console.log('🔄 Переключение на вкладку базовых настроек:', tab);
 
     // Скрываем все вкладки
     document.querySelectorAll('#base-settings .tab-content').forEach(content => {
@@ -7619,15 +7310,12 @@ function saveBaseGradient() {
     setDirty();
     closeModal();
     
-    console.log('✅ Градиент базовых настроек сохранен:', gradient);
 }
 
 // Загрузка базовых настроек из конфигурации
 function loadBaseSettings() {
-    console.log('📋 Загрузка базовых настроек');
     
     if (!window.baseConfig) {
-        console.warn('⚠️ baseConfig не найден');
         return;
     }
     
@@ -8166,12 +7854,10 @@ function loadBaseSettings() {
         }
     }
     
-    console.log('✅ Базовые настройки загружены');
 }
 
 // Сбор данных базовых настроек
 function collectBaseSettings() {
-    console.log('📝 Сбор данных базовых настроек');
     
     const baseSettings = {
         behavior: {
@@ -8328,14 +8014,12 @@ function collectBaseSettings() {
         } : undefined
     };
 
-    console.log('✅ Базовые настройки собраны:', baseSettings);
     return baseSettings;
 }
 // ===============================================
 // СОХРАНЕНИЕ ГЛОБАЛЬНЫХ НАСТРОЕК
 // ===============================================
 function saveGlobalSettings() {
-    console.log('💾 Сохранение глобальных настроек');
 
     // ✅ ИСПРАВЛЕНО: Получаем существующую структуру GlobalConfigSettings из памяти
     const existingGlobalSettings = window.GlobalConfigSettings || {};
@@ -8427,17 +8111,8 @@ function saveGlobalSettings() {
         }
     };
 
-    console.log('📦 Полная структура для сохранения:', globalSettings);
-    console.log('📦 JSON для отправки:', JSON.stringify(globalSettings, null, 2));
 
     // ✅ ОТЛАДКА: Проверяем наличие всех критических полей
-    console.log('🔍 Проверка критических полей:');
-    console.log('  - showConfigSwitcher:', globalSettings.showConfigSwitcher, '(из элемента:', document.getElementById('showConfigSwitcherToggle')?.classList.contains('active'), ')');
-    console.log('  - configSwitcher.defaultConfig:', globalSettings.configSwitcher?.defaultConfig);
-    console.log('  - languageSettings.iconSettings:', globalSettings.languageSettings?.iconSettings ? 'есть' : 'НЕТ');
-    console.log('  - availableConfigs:', globalSettings.availableConfigs ? Object.keys(globalSettings.availableConfigs) : 'НЕТ');
-    console.log('  - streamingAnimation:', globalSettings.streamingAnimation);
-    console.log('  - themeSettings.userCanChange:', globalSettings.themeSettings?.userCanChange);
 
     showSaveIndicator('saving', t('save.saving_global'));
 
@@ -8464,7 +8139,6 @@ function saveGlobalSettings() {
         }
     })
     .catch(error => {
-        console.error('❌ Ошибка:', error);
         showSaveIndicator('error', 'Ошибка связи с сервером');
     });
 }
@@ -8481,12 +8155,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===============================================
 const originalSaveConfig = window.saveConfig;
 window.saveConfig = function() {
-    console.log('🔍 ОТЛАДКА: Начало сохранения конфигурации');
-    console.log('📝 Текущая конфигурация:', currentConfig);
     
     const configData = collectConfigData();
-    console.log('📦 Собранные данные конфигурации:', configData);
-    console.log('📊 Размер данных:', JSON.stringify(configData).length, 'символов');
     
     // Вызываем оригинальную функцию
     if (originalSaveConfig) {
@@ -8497,10 +8167,8 @@ window.saveConfig = function() {
 // Логирование ответа сервера
 const originalFetch = window.fetch;
 window.fetch = function(...args) {
-    console.log('📡 Отправка запроса:', args[0]);
     
     return originalFetch.apply(this, args).then(response => {
-        console.log('📨 Получен ответ:', response.status, response.statusText);
         return response;
     });
 };
@@ -8533,7 +8201,6 @@ window.showBackups = function() {
     fetch('list-backups.php')
         .then(r => r.json())
         .then(backups => {
-            console.log('📦 Доступные бэкапы:', backups);
             if (backups.length === 0) {
                 alert(t('alert.no_backups'));
                 return;
@@ -8652,7 +8319,6 @@ function updateBrandingPreview() {
 // Загрузка настроек брендирования
 function loadBrandingSettings() {
     if (!window.baseConfig || !window.baseConfig.branding) {
-        console.warn('⚠️ Настройки брендирования не найдены в конфигурации');
         return;
     }
 
@@ -8685,7 +8351,6 @@ function loadBrandingSettings() {
     updateBrandingTypeFields();
     updateBrandingPreview();
 
-    console.log('✅ Настройки брендирования загружены');
 }
 
 // Сохранение настроек брендирования
@@ -8725,5 +8390,4 @@ function saveBrandingSettings() {
     // Сохраняем на сервер
     saveBaseSettings();
 
-    console.log('✅ Настройки брендирования сохранены:', branding);
 }

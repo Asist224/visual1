@@ -134,13 +134,11 @@ function handleCopyButtonClick(event) {
 // =====================================================
 function updateIntegrationCode() {
     if (!clientData || !clientData.license_key) {
-        console.error('clientData or license_key is not defined');
         return;
     }
 
     const codeElement = document.getElementById('integrationCode');
     if (!codeElement) {
-        console.error('integrationCode element not found!');
         return;
     }
 
@@ -166,7 +164,6 @@ async function loadDomains() {
             renderDomains(data.max_domains);
         }
     } catch (error) {
-        console.error('Error loading domains:', error);
     }
 }
 
@@ -407,7 +404,6 @@ function copyToClipboard(elementId, button) {
     try {
         success = document.execCommand('copy');
     } catch (err) {
-        console.error('Copy error:', err);
     } finally {
         document.body.removeChild(textArea);
     }
@@ -450,7 +446,6 @@ window.copyIntegrationCode = function(event) {
     try {
         success = document.execCommand('copy');
     } catch (err) {
-        console.error('Copy error:', err);
     } finally {
         document.body.removeChild(textArea);
     }

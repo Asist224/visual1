@@ -2817,7 +2817,6 @@ if (syncSection) {
             
 // Проверяем загрузку конфигурации
 if (typeof MonitoringConfig === 'undefined') {
-    console.error('❌ MonitoringConfig не загружен!');
     // Создаем минимальную конфигурацию для работы
     window.MonitoringConfig = {
         language: 'ru',
@@ -3111,7 +3110,6 @@ let currentConfig = JSON.parse(JSON.stringify(MonitoringConfig));
 
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Страница загружена, инициализация...');
     
     // Устанавливаем язык страницы из конфигурации
     if (typeof MonitoringConfig !== 'undefined' && MonitoringConfig.language) {
@@ -3127,7 +3125,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Загрузка текущей конфигурации
 function loadCurrentConfiguration() {
-    console.log('📋 Загрузка конфигурации...');
     
     // Язык интерфейса
     createLanguageOptions();
@@ -3688,7 +3685,6 @@ function updateConfigurationName(key, newName) {
             currentConfig.availableConfigurations[key].labels = {};
         }
         currentConfig.availableConfigurations[key].labels[currentConfig.language] = newName;
-        console.log(`Название конфигурации ${key} изменено на: ${newName}`);
     }
 }
 
@@ -4148,7 +4144,6 @@ showConfirmModal(
             alert('Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
         }
     } catch (error) {
-        console.error('Ошибка:', error);
         alert('Ошибка при сохранении конфигурации: ' + error.message);
         
         if (confirm('Не удалось сохранить на сервер. Скачать файл конфигурации?')) {
@@ -4191,7 +4186,6 @@ window.exportConfiguration = async function() {
             URL.revokeObjectURL(url);
         } else {
             // Если сервер недоступен, экспортируем только JSON
-            console.warn('Сервер недоступен, экспортируем упрощенную версию');
             const configString = JSON.stringify(currentConfig, null, 2);
             const blob = new Blob([configString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -4204,7 +4198,6 @@ window.exportConfiguration = async function() {
             URL.revokeObjectURL(url);
         }
     } catch (error) {
-        console.error('Ошибка экспорта:', error);
         // В случае ошибки экспортируем упрощенную версию
         const configString = JSON.stringify(currentConfig, null, 2);
         const blob = new Blob([configString], { type: 'application/json' });
@@ -4696,4 +4689,3 @@ window.saveBrandingSettings = function() {
     if (brandingFontSize) currentConfig.branding.size.fontSize = parseInt(brandingFontSize.value) || 12;
 }
 
-console.log('✅ Скрипт конфигурации загружен');
