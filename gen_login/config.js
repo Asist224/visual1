@@ -7,13 +7,9 @@
  */
 
 const CONFIG = {
-    // API endpoint for user management
-    // URL вебхука для управления пользователями
+    // API endpoint for user management and login
+    // URL вебхука для управления пользователями и авторизации
     API_URL: 'https://your-server.com/webhook/admin/users',
-
-    // API endpoint for login
-    // URL вебхука для авторизации
-    LOGIN_URL: 'https://your-server.com/webhook/admin/auth',
 
     // Default language: 'ru' or 'en'
     // Язык по умолчанию: 'ru' или 'en'

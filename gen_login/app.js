@@ -249,10 +249,10 @@ async function handleLogin(event) {
     const errorDiv = document.getElementById('loginError');
 
     try {
-        const response = await fetch(CONFIG.LOGIN_URL, {
+        const response = await fetch(CONFIG.API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ action: 'login', username, password })
         });
 
         const result = await response.json();
