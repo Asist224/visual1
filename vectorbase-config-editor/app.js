@@ -1,21 +1,3 @@
-        // Default VectorBaseConfig if not loaded from external file
-        if (typeof VectorBaseConfig === 'undefined') {
-            window.VectorBaseConfig = {
-                currentLanguage: 'ru',
-                databases: [],
-                allowedFileTypes: [],
-                api: {
-                    listDatabases: '',
-                    readVectorBase: '',
-                    writeVectorBase: '',
-                    getLearningStats: ''
-                },
-                refreshInterval: 5000,
-                recordsPerPage: 20,
-                historyPerPage: 10
-            };
-        }
-
         // Переводы для страницы настроек
         const ConfigEditorTranslations = {
             ru: {
