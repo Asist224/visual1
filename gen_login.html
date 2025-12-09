@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление пользователями - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #2d3748;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table thead {
+            background: #f7fafc;
+        }
+
+        .users-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .users-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-manager {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-viewer {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>👥 Управление пользователями</h1>
+            <div class="user-info">
+                <span id="currentUser">👤 admin</span>
+                <button class="logout-btn" onclick="logout()">🚪 Выход</button>
+            </div>
+        </div>
+
+        <!-- Панель создания пользователя -->
+        <div class="panel">
+            <h2 class="section-title">➕ Добавить нового пользователя</h2>
+            <form id="createUserForm" onsubmit="createUser(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Имя пользователя *</label>
+                        <input type="text" id="username" required minlength="3" placeholder="минимум 3 символа">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль *</label>
+                        <input type="password" id="password" required minlength="6" placeholder="минимум 6 символов">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="user@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Роль *</label>
+                        <select id="role" required>
+                            <option value="viewer">👁️ Viewer (просмотр)</option>
+                            <option value="manager">👔 Manager (управление)</option>
+                            <option value="admin">👑 Admin (полный доступ)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">Полное имя</label>
+                    <input type="text" id="fullName" placeholder="Иван Иванов">
+                </div>
+                <button type="submit" class="btn btn-primary" id="createBtn">
+                    <span id="createBtnText">✨ Создать пользователя</span>
+                    <span id="createBtnSpinner" class="spinner" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Панель списка пользователей -->
+        <div class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="section-title">📋 Список пользователей</h2>
+                <button class="btn btn-success" onclick="loadUsers()">🔄 Обновить</button>
+            </div>
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Полное имя</th>
+                        <th>Создан</th>
+                        <th>Последний вход</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px;">
+                            Загрузка данных...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================
+        // КОНФИГУРАЦИЯ
+        // =====================================================
+        const API_URL = 'https://n8n.cryptomator.pro/webhook/admin/users';
+
+        // =====================================================
+        // АУТЕНТИФИКАЦИЯ
+        // =====================================================
+        function getAuthToken() {
+            return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+        }
+
+        function logout() {
+            if (confirm('Выйти из системы?')) {
+                localStorage.removeItem('authToken');
+                sessionStorage.removeItem('authToken');
+                window.location.href = '/monitoring/monitoring.html'; // или путь к странице входа
+            }
+        }
+
+        // Проверка токена при загрузке
+        if (!getAuthToken()) {
+            alert('Требуется авторизация');
+            window.location.href = '/monitoring/monitoring.html';
+        }
+
+        // =====================================================
+        // СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ
+        // =====================================================
+        async function createUser(event) {
+            event.preventDefault();
+
+            const token = getAuthToken();
+            const btn = document.getElementById('createBtn');
+            const btnText = document.getElementById('createBtnText');
+            const btnSpinner = document.getElementById('createBtnSpinner');
+
+            // Показываем загрузку
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        action: 'create',
+                        username: document.getElementById('username').value.trim(),
+                        password: document.getElementById('password').value,
+                        email: document.getElementById('email').value.trim(),
+                        role: document.getElementById('role').value,
+                        fullName: document.getElementById('fullName').value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('✅ Пользователь успешно создан!', 'success');
+                    document.getElementById('createUserForm').reset();
+                    loadUsers(); // Обновляем список
+                } else {
+                    throw new Error(data.error || 'Ошибка создания пользователя');
+                }
+            } catch (error) {
+                showNotification('❌ ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                btnSpinner.style.display = 'none';
+            }
+        }
+
+        // =====================================================
+        // ЗАГРУЗКА СПИСКА ПОЛЬЗОВАТЕЛЕЙ
+        // =====================================================
+        async function loadUsers() {
+            const token = getAuthToken();
+            const tbody = document.getElementById('usersTableBody');
+
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">Загрузка...</td></tr>';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ action: 'list' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    renderUsers(data.users);
+                } else {
+                    throw new Error(data.error || 'Ошибка загрузки пользователей');
+                }
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 40px; color: #ef4444;">❌ ${error.message}</td></tr>`;
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">Пользователи не найдены</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td><code>${user.id.substring(0, 8)}...</code></td>
+                    <td><strong>${user.username}</strong></td>
+                    <td>${user.email || '—'}</td>
+                    <td><span class="badge badge-${user.role}">${getRoleIcon(user.role)} ${user.role}</span></td>
+                    <td>${user.fullName || '—'}</td>
+                    <td>${formatDate(user.createdAt)}</td>
+                    <td>${user.lastLogin ? formatDate(user.lastLogin) : 'Никогда'}</td>
+                    <td><span class="badge badge-${user.isActive ? 'active' : 'inactive'}">${user.isActive ? '✅ Активен' : '❌ Неактивен'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn btn-primary" onclick="editUser('${user.id}', '${user.username}')">✏️ Изменить</button>
+                            <button class="action-btn btn-danger" onclick="deleteUser('${user.id}', '${user.username}')">🗑️ Удалить</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // =====================================================
+        // УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
+        // =====================================================
+        async function deleteUser(userId, username) {
+            if (!confirm(`Удалить пользователя "${username}"?\nЭто действие нельзя отменить!`)) {
+                return;
+            }
+
+            const token = getAuthToken();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        userId: userId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('✅ Пользователь удален', 'success');
+                    loadUsers();
+                } else {
+                    throw new Error(data.error || 'Ошибка удаления');
+                }
+            } catch (error) {
+                showNotification('❌ ' + error.message, 'error');
+            }
+        }
+
+        // =====================================================
+        // РЕДАКТИРОВАНИЕ ПОЛЬЗОВАТЕЛЯ (упрощенная версия)
+        // =====================================================
+        async function editUser(userId, username) {
+            const newPassword = prompt(`Изменить пароль для "${username}":\n(минимум 6 символов)`);
+            
+            if (!newPassword) return;
+            
+            if (newPassword.length < 6) {
+                alert('Пароль должен быть минимум 6 символов');
+                return;
+            }
+
+            const token = getAuthToken();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        action: 'update',
+                        userId: userId,
+                        newPassword: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('✅ Пароль изменен', 'success');
+                } else {
+                    throw new Error(data.error || 'Ошибка обновления');
+                }
+            } catch (error) {
+                showNotification('❌ ' + error.message, 'error');
+            }
+        }
+
+        // =====================================================
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        // =====================================================
+        function getRoleIcon(role) {
+            const icons = { admin: '👑', manager: '👔', viewer: '👁️' };
+            return icons[role] || '👤';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '—';
+            const date = new Date(dateString);
+            return date.toLocaleString('ru-RU', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        // =====================================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
+            
+            // Показываем имя текущего пользователя
+            const userData = localStorage.getItem('userData');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    document.getElementById('currentUser').textContent = `👤 ${user.username}`;
+                } catch (e) {}
+            }
+        });
+    </script>
+</body>
+</html>

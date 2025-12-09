@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - License System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1d2e 0%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .modal {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal:not(.active) {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .feature-badge {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        input, select, textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Date input calendar icon fix */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+        
+        input[type="date"] {
+            color-scheme: dark;
+        }
+        
+        input:read-only {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .copy-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .copy-btn.copied {
+            animation: pulse 0.5s ease;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .domain-card {
+            transition: all 0.3s ease;
+        }
+        
+        .domain-card:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .pagination-btn {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+            color: white;
+        }
+        
+        .pagination-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="text-white">
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center px-4">
+        <div class="glass-card max-w-md w-full rounded-2xl p-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">License System</h1>
+                <p class="text-gray-400 mt-2">Client Dashboard</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Client ID</label>
+                    <input type="text" id="clientId" required
+                        placeholder="CLIENT_XXXXXXXXXX"
+                        class="w-full px-4 py-3 rounded-lg transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input type="password" id="password" required
+                        class="w-full px-4 py-3 rounded-lg transition-all">
+                </div>
+                
+                <div id="loginError" class="hidden text-red-400 text-sm bg-red-500/10 px-4 py-2 rounded-lg"></div>
+                
+                <button type="submit" 
+                    class="w-full btn-gradient text-white py-3 px-4 rounded-lg font-medium">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden min-h-screen">
+        <!-- Header -->
+        <nav class="glass-card border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold">My License</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-300" id="clientName"></span>
+                        <button onclick="logout()" 
+                            class="bg-red-500/10 text-red-400 px-4 py-2 rounded-lg hover:bg-red-500/20 transition duration-200 border border-red-500/20">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            
+            <!-- License Info Card -->
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold">License Information</h2>
+                    <div id="displayStatus" class="px-4 py-2 rounded-full text-sm font-semibold"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Client ID</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" id="displayClientId" readonly
+                                class="flex-1 px-4 py-3 rounded-lg font-mono text-sm">
+                            <button data-copy-target="displayClientId"
+                                class="copy-client-id-btn px-4 py-3 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition border border-white/10">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                        <input type="text" id="displayEmail" readonly
+                            class="w-full px-4 py-3 rounded-lg">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">License Key</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" id="displayLicenseKey" readonly
+                                class="flex-1 px-4 py-3 rounded-lg font-mono text-sm">
+                            <button data-copy-target="displayLicenseKey"
+                                class="copy-license-key-btn btn-gradient px-4 py-3 text-white rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Expires At</label>
+                        <input type="text" id="displayExpires" readonly
+                            class="w-full px-4 py-3 rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Features</label>
+                        <div id="displayFeatures" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domain Management Card -->
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold">Domain Management</h2>
+                        <p class="text-sm text-gray-400 mt-1">
+                            <span id="domainCount" class="text-indigo-400 font-semibold">0</span> / 
+                            <span id="maxDomains">0</span> domains used
+                        </p>
+                    </div>
+                    <button onclick="openAddDomainModal()" id="addDomainBtn"
+                        class="btn-gradient text-white px-6 py-3 rounded-lg font-medium whitespace-nowrap">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Domain
+                    </button>
+                </div>
+                
+                <div id="domainsList" class="space-y-3">
+                    <!-- Dynamic domains list -->
+                </div>
+                
+                <div id="noDomains" class="hidden text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                    </svg>
+                    <p class="text-gray-400 text-lg">No domains added yet</p>
+                    <p class="text-gray-500 text-sm mt-2">Click "Add Domain" to get started</p>
+                </div>
+                
+                <!-- Pagination for domains -->
+                <div id="domainPagination" class="hidden mt-6 flex items-center justify-between border-t border-white/10 pt-4">
+                    <div class="text-sm text-gray-400">
+                        Showing <span id="domainShowingFrom">0</span>-<span id="domainShowingTo">0</span> of <span id="domainTotalCount">0</span> domains
+                    </div>
+                    <div class="flex space-x-2" id="domainPaginationContainer">
+                        <!-- Dynamic pagination buttons -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integration Guide Card -->
+            <div class="glass-card rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-4">Integration Guide</h2>
+                
+                <div class="gradient-card rounded-xl p-6">
+                    <h3 class="font-semibold text-lg mb-4">How to integrate the license system:</h3>
+                    
+                    <ol class="list-decimal list-inside space-y-3 text-gray-300 mb-6">
+                        <li>Copy your <strong class="text-white">License Key</strong> from above</li>
+                        <li>Add your domain(s) to the allowed list</li>
+                        <li>Add the following code to your HTML file:</li>
+                    </ol>
+                    
+                    <div class="bg-black/40 rounded-xl p-4 border border-white/10">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs text-gray-400 font-mono">JavaScript Integration</span>
+                            <button class="copy-integration-btn text-xs px-3 py-1 bg-white/10 text-gray-300 rounded hover:bg-white/20 transition">
+                                Copy Code
+                            </button>
+                        </div>
+                        <pre class="text-xs text-gray-300 overflow-x-auto"><code id="integrationCode">Loading...</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Domain Modal -->
+    <div id="addDomainModal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="glass-card rounded-2xl w-full max-w-md">
+            <div class="p-6 border-b border-white/10">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold">Add Domain</h2>
+                    <button onclick="closeAddDomainModal()" class="text-gray-400 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <form id="addDomainForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Domain Name</label>
+                    <input type="text" id="newDomain" required
+                        placeholder="example.com"
+                        class="w-full px-4 py-3 rounded-lg">
+                    <p class="text-xs text-gray-400 mt-2">Enter domain without http:// or https://</p>
+                </div>
+                
+                <div id="addDomainError" class="hidden text-red-400 text-sm bg-red-500/10 px-4 py-3 rounded-lg"></div>
+                <div id="addDomainSuccess" class="hidden text-green-400 text-sm bg-green-500/10 px-4 py-3 rounded-lg font-semibold"></div>
+                
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" onclick="closeAddDomainModal()" 
+                        class="px-6 py-3 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                        class="btn-gradient px-6 py-3 text-white rounded-lg font-medium">
+                        Add Domain
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Delete Domain Modal -->
+    <div id="deleteDomainModal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="glass-card rounded-2xl w-full max-w-md">
+            <div class="p-6 border-b border-white/10">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold text-red-400">Remove Domain</h2>
+                    <button onclick="closeDeleteDomainModal()" class="text-gray-400 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+                    <p class="text-red-400">⚠️ Are you sure you want to remove this domain?</p>
+                    <p class="text-gray-400 text-sm mt-2">This action cannot be undone.</p>
+                    <div class="mt-3 text-sm">
+                        <div class="text-gray-300">Domain: <span class="font-mono" id="deleteDomainName"></span></div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeDeleteDomainModal()" class="px-6 py-3 bg-white/5 text-gray-300 rounded-lg hover:bg-white/10 transition">Cancel</button>
+                    <button type="button" onclick="confirmDeleteDomain()" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium">Remove Domain</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://n8n.cryptomator.pro/webhook';
+        const DOMAINS_PER_PAGE = 10;
+        let authToken = null;
+        let clientData = null;
+        let allDomains = [];
+        let currentDomainPage = 1;
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const clientId = document.getElementById('clientId').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/client/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ client_id: clientId, password: password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.authenticated) {
+                    authToken = data.token;
+                    clientData = data.client;
+                    
+                    localStorage.setItem('clientToken', data.token);
+                    localStorage.setItem('clientData', JSON.stringify(data.client));
+                    
+                    showDashboard();
+                } else {
+                    document.getElementById('loginError').textContent = data.message || 'Invalid credentials';
+                    document.getElementById('loginError').classList.remove('hidden');
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Connection error';
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        });
+
+        // Show Dashboard
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            
+            // Fill license data
+            document.getElementById('clientName').textContent = clientData.name;
+            document.getElementById('displayClientId').value = clientData.client_id;
+            document.getElementById('displayEmail').value = clientData.email;
+            document.getElementById('displayLicenseKey').value = clientData.license_key;
+            
+            // Status
+            const statusEl = document.getElementById('displayStatus');
+            const isActive = clientData.status === 'active';
+            statusEl.textContent = clientData.status.toUpperCase();
+            statusEl.className = `px-4 py-2 rounded-full text-sm font-semibold border ${
+                isActive 
+                    ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                    : 'bg-red-500/10 text-red-400 border-red-500/20'
+            }`;
+            
+            // Expires
+            const expiresDate = clientData.expires_at ? new Date(clientData.expires_at).toLocaleDateString() : 'Never';
+            document.getElementById('displayExpires').value = expiresDate;
+            
+            // Features
+            const featuresEl = document.getElementById('displayFeatures');
+            featuresEl.innerHTML = '';
+            clientData.features.forEach(feature => {
+                const badge = document.createElement('span');
+                badge.className = 'feature-badge px-3 py-1 text-sm rounded-lg';
+                badge.textContent = feature;
+                featuresEl.appendChild(badge);
+            });
+            
+            // Integration code
+            updateIntegrationCode();
+            
+            // Load domains
+            loadDomains();
+            
+            // Setup Copy Code button with event delegation
+            const dashboard = document.getElementById('dashboard');
+            if (dashboard) {
+                dashboard.removeEventListener('click', handleCopyButtonClick);
+                dashboard.addEventListener('click', handleCopyButtonClick);
+            }
+        }
+        
+        // Handle copy button click with event delegation
+        function handleCopyButtonClick(event) {
+            // Check for Client ID copy button
+            let button = event.target.closest('.copy-client-id-btn');
+            if (button) {
+                event.preventDefault();
+                event.stopPropagation();
+                const targetId = button.getAttribute('data-copy-target');
+                copyToClipboard(targetId, button);
+                return;
+            }
+            
+            // Check for License Key copy button
+            button = event.target.closest('.copy-license-key-btn');
+            if (button) {
+                event.preventDefault();
+                event.stopPropagation();
+                const targetId = button.getAttribute('data-copy-target');
+                copyToClipboard(targetId, button);
+                return;
+            }
+            
+            // Check for Integration Code copy button
+            button = event.target.closest('.copy-integration-btn');
+            if (button) {
+                event.preventDefault();
+                event.stopPropagation();
+                window.copyIntegrationCode(event);
+                return;
+            }
+        }
+
+        // Update Integration Code
+        function updateIntegrationCode() {
+            if (!clientData) {
+                console.error('clientData is not defined');
+                return;
+            }
+            
+            if (!clientData.license_key) {
+                console.error('license_key is empty');
+                return;
+            }
+            
+            const codeElement = document.getElementById('integrationCode');
+            if (!codeElement) {
+                console.error('integrationCode element not found!');
+                return;
+            }
+            
+            const code = `<!-- Add this to your HTML file -->
+<script src="https://license.cryptomator.pro/monitoring.js" 
+        data-license="${clientData.license_key}">
+<\/script>`;
+            
+            codeElement.textContent = code;
+        }
+
+        // Load Domains
+        async function loadDomains() {
+            try {
+                const response = await fetch(`${API_BASE}/client/domains?client_id=${clientData.client_id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allDomains = data.allowed_domains || [];
+                    currentDomainPage = 1;
+                    renderDomains(data.max_domains);
+                }
+            } catch (error) {
+                console.error('Error loading domains:', error);
+            }
+        }
+
+        // Render Domains with Pagination
+        function renderDomains(maxDomains) {
+            const domainsList = document.getElementById('domainsList');
+            const noDomains = document.getElementById('noDomains');
+            const pagination = document.getElementById('domainPagination');
+            
+            document.getElementById('domainCount').textContent = allDomains.length;
+            document.getElementById('maxDomains').textContent = maxDomains;
+            
+            // Enable/disable add button
+            const addBtn = document.getElementById('addDomainBtn');
+            if (allDomains.length >= maxDomains) {
+                addBtn.disabled = true;
+                addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                addBtn.classList.remove('hover:shadow-lg');
+            } else {
+                addBtn.disabled = false;
+                addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            if (allDomains.length === 0) {
+                domainsList.innerHTML = '';
+                noDomains.classList.remove('hidden');
+                pagination.classList.add('hidden');
+                return;
+            }
+            
+            noDomains.classList.add('hidden');
+            
+            // Pagination
+            const start = (currentDomainPage - 1) * DOMAINS_PER_PAGE;
+            const end = start + DOMAINS_PER_PAGE;
+            const pageDomains = allDomains.slice(start, end);
+            
+            domainsList.innerHTML = '';
+            pageDomains.forEach(domain => {
+                const domainCard = document.createElement('div');
+                domainCard.className = 'domain-card flex items-center justify-between p-4 rounded-lg border border-white/10';
+                domainCard.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-medium text-white">${domain}</div>
+                            <div class="text-xs text-gray-400">Active</div>
+                        </div>
+                    </div>
+                    <button onclick="deleteDomain('${domain}')" 
+                        class="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                `;
+                domainsList.appendChild(domainCard);
+            });
+            
+            // Show pagination if needed
+            if (allDomains.length > DOMAINS_PER_PAGE) {
+                pagination.classList.remove('hidden');
+                renderDomainPagination();
+            } else {
+                pagination.classList.add('hidden');
+            }
+        }
+
+        // Render Domain Pagination
+        function renderDomainPagination() {
+            const totalPages = Math.ceil(allDomains.length / DOMAINS_PER_PAGE);
+            const container = document.getElementById('domainPaginationContainer');
+            container.innerHTML = '';
+            
+            const start = (currentDomainPage - 1) * DOMAINS_PER_PAGE + 1;
+            const end = Math.min(currentDomainPage * DOMAINS_PER_PAGE, allDomains.length);
+            
+            document.getElementById('domainShowingFrom').textContent = start;
+            document.getElementById('domainShowingTo').textContent = end;
+            document.getElementById('domainTotalCount').textContent = allDomains.length;
+            
+            // Previous
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn px-3 py-2 rounded-lg';
+            prevBtn.innerHTML = '&laquo;';
+            prevBtn.disabled = currentDomainPage === 1;
+            prevBtn.onclick = () => changeDomainPage(currentDomainPage - 1);
+            container.appendChild(prevBtn);
+            
+            // Pages
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn px-4 py-2 rounded-lg ${i === currentDomainPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => changeDomainPage(i);
+                container.appendChild(pageBtn);
+            }
+            
+            // Next
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn px-3 py-2 rounded-lg';
+            nextBtn.innerHTML = '&raquo;';
+            nextBtn.disabled = currentDomainPage === totalPages;
+            nextBtn.onclick = () => changeDomainPage(currentDomainPage + 1);
+            container.appendChild(nextBtn);
+        }
+
+        // Change Domain Page
+        function changeDomainPage(page) {
+            currentDomainPage = page;
+            renderDomains(clientData.max_domains || 1);
+        }
+
+        // Modal Functions
+        function openAddDomainModal() {
+            document.getElementById('addDomainModal').classList.add('active');
+            document.getElementById('addDomainForm').reset();
+            document.getElementById('addDomainError').classList.add('hidden');
+            document.getElementById('addDomainSuccess').classList.add('hidden');
+        }
+
+        function closeAddDomainModal() {
+            document.getElementById('addDomainModal').classList.remove('active');
+        }
+
+        // Add Domain
+        document.getElementById('addDomainForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const domain = document.getElementById('newDomain').value.trim();
+            
+            try {
+                const response = await fetch(`${API_BASE}/client/domains`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: clientData.client_id,
+                        domain: domain
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('addDomainSuccess').textContent = 'Domain added successfully!';
+                    document.getElementById('addDomainSuccess').classList.remove('hidden');
+                    setTimeout(() => {
+                        closeAddDomainModal();
+                        loadDomains();
+                    }, 1500);
+                } else {
+                    document.getElementById('addDomainError').textContent = result.message || 'Error adding domain';
+                    document.getElementById('addDomainError').classList.remove('hidden');
+                }
+            } catch (error) {
+                document.getElementById('addDomainError').textContent = 'Connection error';
+                document.getElementById('addDomainError').classList.remove('hidden');
+            }
+        });
+
+        // Delete Domain Modal
+        let currentDeleteDomain = null;
+
+        function deleteDomain(domain) {
+            currentDeleteDomain = domain;
+            document.getElementById('deleteDomainName').textContent = domain;
+            document.getElementById('deleteDomainModal').classList.add('active');
+        }
+
+        function closeDeleteDomainModal() {
+            currentDeleteDomain = null;
+            document.getElementById('deleteDomainModal').classList.remove('active');
+        }
+
+        async function confirmDeleteDomain() {
+            if (!currentDeleteDomain) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/client/domains?client_id=${clientData.client_id}&domain=${currentDeleteDomain}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeDeleteDomainModal();
+                    loadDomains();
+                } else {
+                    alert('Error: ' + (result.message || 'Failed to delete domain'));
+                    closeDeleteDomainModal();
+                }
+            } catch (error) {
+                alert('Connection error');
+                closeDeleteDomainModal();
+            }
+        }
+
+        // Copy Functions
+        // Copy to Clipboard function (for Client ID, License Key, Email)
+        function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.error('❌ Element not found:', elementId);
+                if (button) showError(button, '');
+                return;
+            }
+            
+            const text = element.value || element.textContent || element.innerText;
+            
+            if (!text || text.trim() === '') {
+                console.error('❌ Nothing to copy');
+                if (button) showError(button, '');
+                return;
+            }
+            
+            // Create textarea for reliable copying
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'absolute';
+            textArea.style.left = '-9999px';
+            textArea.style.top = '0';
+            textArea.style.width = '1px';
+            textArea.style.height = '1px';
+            textArea.style.opacity = '1';
+            textArea.setAttribute('readonly', '');
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            textArea.setSelectionRange(0, text.length);
+            
+            let success = false;
+            
+            try {
+                success = document.execCommand('copy');
+                
+                if (!success) {
+                    // Try alternative method
+                    const range = document.createRange();
+                    range.selectNodeContents(textArea);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    success = document.execCommand('copy');
+                }
+            } catch (err) {
+                console.error('❌ execCommand error:', err);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+            
+            if (success) {
+                if (button) showSuccess(button, '');
+            } else {
+                console.error('❌ Copy failed');
+                if (button) showError(button, '');
+            }
+        }
+
+        // Copy Integration Code function - GLOBAL
+        window.copyIntegrationCode = function(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            const codeElement = document.getElementById('integrationCode');
+            if (!codeElement) {
+                console.error('❌ integrationCode element not found');
+                return;
+            }
+            
+            const code = codeElement.textContent || codeElement.innerText;
+            
+            if (code === 'Loading...' || code.trim() === '') {
+                console.error('❌ Integration code is not loaded yet');
+                return;
+            }
+            
+            const button = event ? event.target.closest('button') : document.querySelector('.copy-integration-btn');
+            const originalText = button ? button.textContent : '';
+            
+            // Create textarea for copying
+            const textArea = document.createElement('textarea');
+            textArea.value = code;
+            textArea.style.position = 'absolute';
+            textArea.style.left = '-9999px';
+            textArea.style.top = '0';
+            textArea.style.width = '1px';
+            textArea.style.height = '1px';
+            textArea.style.opacity = '1';
+            textArea.setAttribute('readonly', '');
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            textArea.setSelectionRange(0, code.length);
+            
+            let success = false;
+            
+            try {
+                success = document.execCommand('copy');
+                
+                if (!success) {
+                    // Try alternative method
+                    const range = document.createRange();
+                    range.selectNodeContents(textArea);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    success = document.execCommand('copy');
+                }
+            } catch (err) {
+                console.error('❌ execCommand error:', err);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+            
+            if (success) {
+                if (button) showSuccess(button, originalText);
+            } else {
+                console.error('❌ Copy failed');
+                if (button) showError(button, originalText);
+            }
+        };
+        
+        function tryFallbackCopy(text, button, originalText) {
+            // Create temporary textarea
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            
+            // Make it invisible but still selectable
+            textArea.style.position = 'fixed';
+            textArea.style.top = '0';
+            textArea.style.left = '0';
+            textArea.style.width = '2em';
+            textArea.style.height = '2em';
+            textArea.style.padding = '0';
+            textArea.style.border = 'none';
+            textArea.style.outline = 'none';
+            textArea.style.boxShadow = 'none';
+            textArea.style.background = 'transparent';
+            textArea.style.opacity = '0';
+            
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                
+                if (successful) {
+                    showSuccess(button, originalText);
+                } else {
+                    console.error('❌ execCommand returned false');
+                    showError(button, originalText);
+                }
+            } catch (err) {
+                console.error('❌ execCommand threw error:', err);
+                showError(button, originalText);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        function showSuccess(button, originalText) {
+            // Save original HTML content
+            if (!button.dataset.originalHtml) {
+                button.dataset.originalHtml = button.innerHTML;
+            }
+            
+            // If button has text (Integration Code), change text
+            if (originalText && originalText.trim() !== '') {
+                button.textContent = '✓ Copied!';
+            } else {
+                // If button has only icon (Client ID, License Key), add checkmark
+                button.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>`;
+            }
+            
+            button.classList.remove('bg-white/10', 'bg-white/5', 'bg-red-500/20', 'btn-gradient');
+            button.classList.add('bg-green-500/20', 'border', 'border-green-500/40');
+            
+            setTimeout(() => {
+                // Restore original content
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                } else if (originalText) {
+                    button.textContent = originalText;
+                }
+                
+                button.classList.remove('bg-green-500/20', 'border', 'border-green-500/40');
+                button.classList.add('bg-white/10');
+            }, 2000);
+        }
+        
+        function showError(button, originalText) {
+            // Save original HTML content
+            if (!button.dataset.originalHtml) {
+                button.dataset.originalHtml = button.innerHTML;
+            }
+            
+            // If button has text (Integration Code), change text
+            if (originalText && originalText.trim() !== '') {
+                button.textContent = '✗ Failed';
+            } else {
+                // If button has only icon (Client ID, License Key), add X mark
+                button.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>`;
+            }
+            
+            button.classList.remove('bg-white/10', 'bg-white/5', 'bg-green-500/20', 'btn-gradient');
+            button.classList.add('bg-red-500/20', 'border', 'border-red-500/40');
+            
+            setTimeout(() => {
+                // Restore original content
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                } else if (originalText) {
+                    button.textContent = originalText;
+                }
+                
+                button.classList.remove('bg-red-500/20', 'border', 'border-red-500/40');
+                button.classList.add('bg-white/10');
+            }, 2000);
+        }
+
+        // Logout
+        function logout() {
+            authToken = null;
+            clientData = null;
+            localStorage.removeItem('clientToken');
+            localStorage.removeItem('clientData');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+
+        // Check saved session
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('clientToken');
+            const savedData = localStorage.getItem('clientData');
+            
+            if (savedToken && savedData) {
+                authToken = savedToken;
+                clientData = JSON.parse(savedData);
+                showDashboard();
+            }
+        });
+    </script>
+</body>
+</html>
