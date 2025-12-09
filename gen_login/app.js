@@ -239,35 +239,23 @@ function showNotification(message, type) {
 }
 
 // =====================================================
-// LOGIN
+// LOGIN (local authentication)
 // =====================================================
-async function handleLogin(event) {
+function handleLogin(event) {
     event.preventDefault();
 
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
     const errorDiv = document.getElementById('loginError');
 
-    try {
-        // Send login request to server (same as admin panel)
-        const response = await fetch(CONFIG.API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'login', username, password })
-        });
-
-        const result = await response.json();
-
-        if (result.success && result.token) {
-            localStorage.setItem('authToken', result.token);
-            localStorage.setItem('userData', JSON.stringify({ username }));
-            window.location.reload();
-        } else {
-            errorDiv.textContent = result.message || t('loginError');
-            errorDiv.style.display = 'block';
-        }
-    } catch (error) {
-        errorDiv.textContent = t('connectionError');
+    // Check credentials locally against config
+    if (username === CONFIG.ADMIN_USERNAME && password === CONFIG.ADMIN_PASSWORD) {
+        // Store JWT token from config for API calls
+        localStorage.setItem('authToken', CONFIG.AUTH_TOKEN);
+        localStorage.setItem('userData', JSON.stringify({ username }));
+        window.location.reload();
+    } else {
+        errorDiv.textContent = t('loginError');
         errorDiv.style.display = 'block';
     }
 }
