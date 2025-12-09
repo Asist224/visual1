@@ -7,18 +7,9 @@
  */
 
 const CONFIG = {
-    // API endpoint for user management
-    // URL вебхука для управления пользователями
+    // API endpoint for user management and login
+    // URL вебхука для управления пользователями и авторизации
     API_URL: 'https://your-server.com/webhook/admin/users',
-
-    // Admin credentials for login
-    // Логин и пароль администратора для входа
-    ADMIN_USERNAME: 'admin',
-    ADMIN_PASSWORD: 'admin123',
-
-    // JWT token for API authorization (get from your n8n or generate valid JWT)
-    // JWT токен для авторизации API (получите из n8n или сгенерируйте валидный JWT)
-    AUTH_TOKEN: 'your-valid-jwt-token-here',
 
     // Default language: 'ru' or 'en'
     // Язык по умолчанию: 'ru' или 'en'
