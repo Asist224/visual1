@@ -8727,5 +8727,3 @@ function saveBrandingSettings() {
 
     console.log('✅ Настройки брендирования сохранены:', branding);
 }
-
-    </script>
