@@ -78,6 +78,9 @@ const TRANSLATIONS = {
         passwordTooShort: 'Пароль должен быть минимум 6 символов',
         authRequired: 'Требуется авторизация',
         pleaseLogin: 'Пожалуйста, войдите в систему для доступа к этой странице',
+        loginBtn: 'Войти',
+        loginError: 'Неверный логин или пароль',
+        connectionError: 'Ошибка подключения к серверу',
 
         // Language
         language: 'Язык'
@@ -155,6 +158,9 @@ const TRANSLATIONS = {
         passwordTooShort: 'Password must be at least 6 characters',
         authRequired: 'Authorization required',
         pleaseLogin: 'Please log in to access this page',
+        loginBtn: 'Log In',
+        loginError: 'Invalid username or password',
+        connectionError: 'Server connection error',
 
         // Language
         language: 'Language'

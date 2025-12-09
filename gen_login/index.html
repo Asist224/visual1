@@ -7,12 +7,23 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Access Denied Screen -->
-    <div id="accessDenied" class="access-denied" style="display: none;">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="access-denied" style="display: none;">
         <div class="access-denied-content">
             <h1>🔒</h1>
             <h2 data-i18n="authRequired">Authorization Required</h2>
             <p data-i18n="pleaseLogin">Please log in to access this page</p>
+
+            <form id="loginForm" class="login-form">
+                <div class="login-field">
+                    <input type="text" id="loginUsername" required placeholder="Username">
+                </div>
+                <div class="login-field">
+                    <input type="password" id="loginPassword" required placeholder="Password">
+                </div>
+                <div id="loginError" class="login-error"></div>
+                <button type="submit" class="login-btn" data-i18n="loginBtn">Log In</button>
+            </form>
         </div>
     </div>
 

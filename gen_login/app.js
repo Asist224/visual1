@@ -239,12 +239,51 @@ function showNotification(message, type) {
 }
 
 // =====================================================
+// LOGIN
+// =====================================================
+async function handleLogin(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('loginError');
+
+    try {
+        const response = await fetch(CONFIG.LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.token) {
+            localStorage.setItem('authToken', result.token);
+            localStorage.setItem('userData', JSON.stringify({ username }));
+            window.location.reload();
+        } else {
+            errorDiv.textContent = result.message || t('loginError');
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        errorDiv.textContent = t('connectionError');
+        errorDiv.style.display = 'block';
+    }
+}
+
+// =====================================================
 // INITIALIZATION
 // =====================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Setup login form handler
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
     // Check authentication
     if (!getAuthToken()) {
-        document.getElementById('accessDenied').style.display = 'flex';
+        document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('mainContainer').style.display = 'none';
         return;
     }
