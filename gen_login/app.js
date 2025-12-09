@@ -241,32 +241,22 @@ function showNotification(message, type) {
 // =====================================================
 // LOGIN
 // =====================================================
-async function handleLogin(event) {
+function handleLogin(event) {
     event.preventDefault();
 
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
     const errorDiv = document.getElementById('loginError');
 
-    try {
-        const response = await fetch(CONFIG.API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'login', username, password })
-        });
-
-        const result = await response.json();
-
-        if (result.success && result.token) {
-            localStorage.setItem('authToken', result.token);
-            localStorage.setItem('userData', JSON.stringify({ username }));
-            window.location.reload();
-        } else {
-            errorDiv.textContent = result.message || t('loginError');
-            errorDiv.style.display = 'block';
-        }
-    } catch (error) {
-        errorDiv.textContent = t('connectionError');
+    // Check credentials against config
+    if (username === CONFIG.ADMIN_USERNAME && password === CONFIG.ADMIN_PASSWORD) {
+        // Generate simple token
+        const token = btoa(username + ':' + Date.now());
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userData', JSON.stringify({ username }));
+        window.location.reload();
+    } else {
+        errorDiv.textContent = t('loginError');
         errorDiv.style.display = 'block';
     }
 }
