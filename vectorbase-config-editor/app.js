@@ -1031,4 +1031,3 @@ window.VectorBaseConfig = VectorBaseConfig;`;
         }
 
         console.log('✅ Скрипт конфигурации загружен');
-    </script>
