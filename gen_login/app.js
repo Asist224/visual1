@@ -250,9 +250,8 @@ function handleLogin(event) {
 
     // Check credentials against config
     if (username === CONFIG.ADMIN_USERNAME && password === CONFIG.ADMIN_PASSWORD) {
-        // Generate simple token
-        const token = btoa(username + ':' + Date.now());
-        localStorage.setItem('authToken', token);
+        // Use JWT token from config for API authorization
+        localStorage.setItem('authToken', CONFIG.AUTH_TOKEN);
         localStorage.setItem('userData', JSON.stringify({ username }));
         window.location.reload();
     } else {

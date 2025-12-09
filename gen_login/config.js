@@ -16,6 +16,10 @@ const CONFIG = {
     ADMIN_USERNAME: 'admin',
     ADMIN_PASSWORD: 'admin123',
 
+    // JWT token for API authorization (get from your n8n or generate valid JWT)
+    // JWT токен для авторизации API (получите из n8n или сгенерируйте валидный JWT)
+    AUTH_TOKEN: 'your-valid-jwt-token-here',
+
     // Default language: 'ru' or 'en'
     // Язык по умолчанию: 'ru' или 'en'
     DEFAULT_LANGUAGE: 'ru'
