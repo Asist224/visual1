@@ -14,7 +14,7 @@ const CONFIG = {
     // Specific endpoints (relative to API_BASE)
     // Конкретные эндпоинты (относительно API_BASE)
     ENDPOINTS: {
-        ADMIN_LOGIN: '/api/admin-login',
+        ADMIN_LOGIN: '/admin/auth',
         CLIENTS: '/api/clients',
         RESET_PASSWORD: '/api/reset-password'
     },
