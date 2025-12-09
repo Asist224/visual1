@@ -2123,12 +2123,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Загрузить данные конфигурации
     loadConfigData(configId);
-
-        configId,
-        configName,
-        configIcon,
-        hasConfig: !!config
-    });
 }
 
 // Переключение вкладок
@@ -2205,18 +2199,9 @@ function selectConfig(configId) {
 
         // Если всё ещё не нашли
         if (!configData) {
-
             showSaveIndicator('error', t('save.config_not_found').replace('{id}', configId));
             return;
         }
-
-            configId: configData.configId,
-            botInfo: configData.botInfo,
-            hasTexts: !!configData.texts,
-            hasContacts: !!configData.contacts,
-            hasAppearance: !!configData.appearance,
-            hasBehavior: !!configData.behavior
-        });
 
         // ✅ НОВОЕ: Сохраняем флаг isDirty если загружены несохраненные изменения
         if (fromPendingChanges) {
@@ -4685,20 +4670,7 @@ function collectConfigData() {
         types.push('application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
     }
     data.technical.allowedFileTypes = types;
-    
-     // ✅ ЛОГИРОВАНИЕ: Проверка собранных данных
-        configId: data.configId,
-        hasTexts: !!data.texts,
-        textLanguages: data.texts ? Object.keys(data.texts) : [],
-        hasQuickButtons: !!(data.texts?.ru?.quickButtons),
-        quickButtonsCount: data.texts?.ru?.quickButtons?.length || 0,
-        hasContacts: !!data.contacts,
-        contactsCount: data.contacts?.items?.length || 0,
-        hasBehavior: !!data.behavior,
-        hasAppearance: !!data.appearance,
-        hasTechnical: !!data.technical
-    });
-    
+
     // ✅ ИСПРАВЛЕНИЕ: Собираем тексты для ВСЕХ языков, а не только текущего
     // 1. Сначала сохраняем текущий язык во временное хранилище
     if (!window.tempConfigData) window.tempConfigData = {};
@@ -4927,13 +4899,7 @@ function showSaveIndicator(type, message) {
         const closeBtn = modal?.querySelector('.modal-close');
         const cancelBtn = modal?.querySelector('.modal-cancel-btn');
         const saveBtn = modal?.querySelector('.modal-save-btn');
-        
-            modal: !!modal,
-            closeBtn: !!closeBtn,
-            cancelBtn: !!cancelBtn,
-            saveBtn: !!saveBtn
-        });
-        
+
         // Функция закрытия
 const closeModalWindow = function() {
     const modalToRemove = document.getElementById('createConfigModal');
@@ -6944,14 +6910,7 @@ function debugConfiguration() {
     if (window.ChatConfigs) {
         
         Object.keys(window.ChatConfigs).forEach(key => {
-            if (typeof window.ChatConfigs[key] === 'object' && window.ChatConfigs[key]?.configId) {
-                    configId: window.ChatConfigs[key].configId,
-                    botInfo: window.ChatConfigs[key].botInfo,
-                    hasTexts: !!window.ChatConfigs[key].texts,
-                    hasContacts: !!window.ChatConfigs[key].contacts,
-                    hasQuickButtons: !!window.ChatConfigs[key].texts?.ru?.quickButtons
-                });
-            }
+            // Config check
         });
     }
 }
