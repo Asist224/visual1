@@ -15,7 +15,7 @@ function logout() {
     if (confirm(t('confirmLogout'))) {
         localStorage.removeItem('authToken');
         sessionStorage.removeItem('authToken');
-        window.location.href = CONFIG.LOGOUT_REDIRECT;
+        window.location.reload();
     }
 }
 
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
     if (!getAuthToken()) {
         alert(t('authRequired'));
-        window.location.href = CONFIG.LOGOUT_REDIRECT;
+        window.location.reload();
         return;
     }
 
