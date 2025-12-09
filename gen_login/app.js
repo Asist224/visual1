@@ -244,8 +244,8 @@ function showNotification(message, type) {
 document.addEventListener('DOMContentLoaded', () => {
     // Check authentication
     if (!getAuthToken()) {
-        alert(t('authRequired'));
-        window.location.reload();
+        document.getElementById('accessDenied').style.display = 'flex';
+        document.getElementById('mainContainer').style.display = 'none';
         return;
     }
 

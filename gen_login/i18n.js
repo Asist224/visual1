@@ -77,6 +77,7 @@ const TRANSLATIONS = {
         changePassword: 'Изменить пароль для "{username}":\n(минимум 6 символов)',
         passwordTooShort: 'Пароль должен быть минимум 6 символов',
         authRequired: 'Требуется авторизация',
+        pleaseLogin: 'Пожалуйста, войдите в систему для доступа к этой странице',
 
         // Language
         language: 'Язык'
@@ -153,6 +154,7 @@ const TRANSLATIONS = {
         changePassword: 'Change password for "{username}":\n(minimum 6 characters)',
         passwordTooShort: 'Password must be at least 6 characters',
         authRequired: 'Authorization required',
+        pleaseLogin: 'Please log in to access this page',
 
         // Language
         language: 'Language'
